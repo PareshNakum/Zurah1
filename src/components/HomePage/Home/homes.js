@@ -452,7 +452,7 @@ const Homes = (props) => {
             collectionData();
             journeyData();
         }
-    }, [sectionDataList]);
+    }, [sectionDataList,props.entityData]);
 
     //Update states when first time rendering
     // useEffect(() => {
