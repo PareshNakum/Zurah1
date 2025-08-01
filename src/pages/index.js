@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
+import Head from "next/head";
 
 export async function getServerSideProps(context) {
   const origin =
