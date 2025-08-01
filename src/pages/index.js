@@ -10,7 +10,7 @@ export async function getServerSideProps(context) {
   const origin =
     context.req.headers.origin ||
     (context.req.headers.host
-      ? `https://${context.req.headers.host}`
+      ? `https://zurah1.vercel.app/`
       : "https://zurah1.vercel.app/");
 
   const commanService = new Commanservice(origin);
@@ -39,7 +39,7 @@ export async function getServerSideProps(context) {
           description: data?.seo_description || "Default Description",
           keywords: data?.seo_keywords || "Zurah, Jewellery",
           image: data?.preview_image || "",
-          url: commanService.domain,
+          url: "https://zurah1.vercel.app/",
         },
         entityData: data,
       },
@@ -52,7 +52,7 @@ export async function getServerSideProps(context) {
           title: "Zurah Jewellery",
           description: "Default Description",
           keywords: "Zurah, Jewellery",
-          url: commanService.domain,
+          url: "https://zurah1.vercel.app/",
         },
         entityData: {},
       },
