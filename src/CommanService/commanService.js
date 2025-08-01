@@ -33,7 +33,7 @@ function getEnv(origin) {
       imageUrl: "https://apiuat-ecom-store.upqor.com",
       baseUrl1: "https://apiuat-ecom-store.upqor.com/api/call",
       baseUrl2: "https://apiuat-ecom.upqor.com/call",
-      domain: "https://zurah1.vercel.app/",
+      domain: "https://zurah1.vercel.app",
     };
   }
 

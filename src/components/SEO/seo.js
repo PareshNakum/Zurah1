@@ -12,7 +12,7 @@ const Seo = ({
 }) => {
   const fallbackImage = "https://rpdiamondsandjewellery-uat.s3.ap-southeast-1.amazonaws.com/writable/uploads/1003/510/BRD5100001/mini_program/1003_510_BRD5100001_mini_program_566913517528287565785.png";
   const canonicalUrl =
-    url || "https://zurah1.vercel.app/";
+    url || "https://zurah1.vercel.app";
 
   const schema = {
     "@context": "https://schema.org",
