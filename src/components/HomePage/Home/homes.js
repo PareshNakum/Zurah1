@@ -448,7 +448,7 @@ const Homes = (props) => {
     }
 
     useEffect(() => {
-        if (sectionDataList.length === 0) {
+        if (sectionDataList.length === 0 && props.entityData) {
             collectionData();
             journeyData();
         }
