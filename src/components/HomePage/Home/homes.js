@@ -292,7 +292,7 @@ const Homes = (props) => {
             if (!onceUpdated) {
                 window.scrollTo(0, 0);
                 setOnceUpdated(true);
-                collectionData();
+                collectionData();   
                 journeyData();
             }
         } else {
@@ -447,12 +447,12 @@ const Homes = (props) => {
         })
     }
 
-    // useEffect(() => {
-    //     if (sectionDataList.length === 0 && props.entityData) {
-    //         collectionData();
-    //         journeyData();
-    //     }
-    // }, [sectionDataList]);
+    useEffect(() => {
+        if (sectionDataList.length === 0 && props.entityData) {
+            collectionData();
+            journeyData();
+        }
+    }, [sectionDataList]);
 
     //Update states when first time rendering
     // useEffect(() => {
