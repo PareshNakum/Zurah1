@@ -447,12 +447,12 @@ const Homes = (props) => {
         })
     }
 
-    useEffect(() => {
-        if (sectionDataList.length === 0 && props.entityData) {
-            collectionData();
-            journeyData();
-        }
-    }, [sectionDataList,props.entityData]);
+    // useEffect(() => {
+    //     if (sectionDataList.length === 0 && props.entityData) {
+    //         collectionData();
+    //         journeyData();
+    //     }
+    // }, [sectionDataList,props.entityData]);
 
     //Update states when first time rendering
     // useEffect(() => {

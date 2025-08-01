@@ -7,7 +7,11 @@ import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
 
 export async function getServerSideProps(context) {
-  const origin = "https://zurah1.vercel.app"
+  const origin =
+    context.req.headers.origin ||
+    (context.req.headers.host
+      ? `https://${context.req.headers.host}`
+      : "https://zurah1.vercel.app");
 
   const commanService = new Commanservice(origin);
 
@@ -16,8 +20,13 @@ export async function getServerSideProps(context) {
       "/EmbeddedPageMaster",
       {
         a: "GetStoreData",
-        store_domain: origin,
+        store_domain: "https://zurah1.vercel.app",
         SITDeveloper: "1",
+      },
+      {
+        headers: {
+          origin: "https://zurah1.vercel.app",
+        },
       }
     );
 
@@ -30,7 +39,7 @@ export async function getServerSideProps(context) {
           description: data?.seo_description || "Default Description",
           keywords: data?.seo_keywords || "Zurah, Jewellery",
           image: data?.preview_image || "",
-          url: "https://zurah1.vercel.app",
+          url: commanService.domain,
         },
         entityData: data,
       },
@@ -43,7 +52,7 @@ export async function getServerSideProps(context) {
           title: "Zurah Jewellery",
           description: "Default Description",
           keywords: "Zurah, Jewellery",
-          url: "https://zurah1.vercel.app",
+          url: commanService.domain,
         },
         entityData: {},
       },
@@ -56,7 +65,6 @@ export default function Home({ seoData, entityData }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-console.log(seoData)
     if (entityData && Object.keys(entityData).length > 0) {
       // dispatch(storeEntityId(entityData));
       sessionStorage.setItem("storeData", JSON.stringify(entityData));
