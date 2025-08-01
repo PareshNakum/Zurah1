@@ -11,6 +11,7 @@ export async function getServerSideProps(context) {
 
   const commanService = new Commanservice(origin);
 
+  try {
     const res = await commanService.postApi(
       "/EmbeddedPageMaster",
       {
@@ -33,8 +34,22 @@ export async function getServerSideProps(context) {
         },
         entityData: data,
       },
-    }
+    };
+  } catch (err) {
+    console.error("❌ Server-side fetch error:", err);
+    return {
+      props: {
+        seoData: {
+          title: "Zurah Jewellery",
+          description: "Default Description",
+          keywords: "Zurah, Jewellery",
+          url: "https://zurah1.vercel.app/",
+        },
+        entityData: {},
+      },
+    };
   }
+}
 
 
 export default function Home({ seoData, entityData }) {
