@@ -11,7 +11,7 @@ export async function getServerSideProps(context) {
     context.req.headers.origin ||
     (context.req.headers.host
       ? `https://${context.req.headers.host}`
-      : "https://uat.zurahjewellery.com");
+      : "https://zurah1-pareshs-projects-3d599496.vercel.app");
 
   const commanService = new Commanservice(origin);
 
