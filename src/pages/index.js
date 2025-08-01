@@ -65,6 +65,7 @@ export default function Home({ seoData, entityData }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+console.log(seoData)
     if (entityData && Object.keys(entityData).length > 0) {
       // dispatch(storeEntityId(entityData));
       sessionStorage.setItem("storeData", JSON.stringify(entityData));
