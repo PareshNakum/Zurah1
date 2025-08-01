@@ -26,11 +26,9 @@ const Seo = ({
   return (
     <Head>
       <title>{title}</title>
-      <link rel="canonical" href={canonicalUrl} />
 
       <meta name="description" content={description}></meta>
       <meta name="keywords" content={keywords}></meta>
-      {noIndex && <meta name="robots" content="noindex, nofollow"></meta>}
 
       {/* Open Graph */}
       <meta property="og:type" content={type}></meta>
@@ -45,6 +43,7 @@ const Seo = ({
       <meta name="twitter:description" content={description}></meta>
       <meta name="twitter:image" content={image || fallbackImage}></meta>
       <meta property="twitter:url" content={canonicalUrl}></meta>
+      <link rel="canonical" href={canonicalUrl} />
 
       {/* Structured Data */}
       <script

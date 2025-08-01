@@ -74,13 +74,18 @@ console.log(seoData)
 
   return (
     <>
-      <Seo
+    <Head>
+          <title>{title}</title>
+          <meta name="description" content={description}></meta>
+          <meta name="keywords" content={keywords}></meta>
+          </Head>
+      {/* <Seo
         title={seoData?.title}
         description={seoData?.description}
         keywords={seoData?.keywords}
         image={seoData?.image}
         url={seoData?.url}
-      />
+      /> */}
       <Homes entityData={entityData} />
     </>
   );
