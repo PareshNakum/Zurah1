@@ -10,7 +10,7 @@ export async function getServerSideProps(context) {
   const origin =
     context.req.headers.origin ||
     (context.req.headers.host
-      ? `https://zurah1.vercel.app/`
+      ? `https://${context.req.headers.host}`
       : "https://zurah1.vercel.app/");
 
   const commanService = new Commanservice(origin);
