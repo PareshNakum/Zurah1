@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
-import Head from "next/head";
 
 export async function getServerSideProps(context) {
   const origin =
@@ -75,18 +74,13 @@ console.log(seoData)
 
   return (
     <>
-    <Head>
-          <title>{title}</title>
-          <meta name="description" content={description}></meta>
-          <meta name="keywords" content={keywords}></meta>
-          </Head>
-      {/* <Seo
+      <Seo
         title={seoData?.title}
         description={seoData?.description}
         keywords={seoData?.keywords}
         image={seoData?.image}
         url={seoData?.url}
-      /> */}
+      />
       <Homes entityData={entityData} />
     </>
   );
