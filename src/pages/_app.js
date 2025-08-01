@@ -50,7 +50,7 @@ function InnerApp({ Component, pageProps }) {
 
   // Constants
   const MAX_RETRY_ATTEMPTS = 3;
-  const STORE_DOMAIN = "https://zurah1-pareshs-projects-3d599496.vercel.app/";
+  const STORE_DOMAIN = "https://zurah1.vercel.app/";
 
   // Safe dispatch wrapper
   const safeDispatch = useCallback(

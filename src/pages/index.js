@@ -7,7 +7,7 @@ import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
 
 export async function getServerSideProps(context) {
-  const origin = "https://zurah1-pareshs-projects-3d599496.vercel.app/"
+  const origin = "https://zurah1.vercel.app/"
 
   const commanService = new Commanservice(origin);
 
@@ -16,7 +16,7 @@ export async function getServerSideProps(context) {
       "/EmbeddedPageMaster",
       {
         a: "GetStoreData",
-        store_domain: commanService.domain,
+        store_domain: origin,
         SITDeveloper: "1",
       }
     );
@@ -30,7 +30,7 @@ export async function getServerSideProps(context) {
           description: data?.seo_description || "Default Description",
           keywords: data?.seo_keywords || "Zurah, Jewellery",
           image: data?.preview_image || "",
-          url: "https://zurah1-pareshs-projects-3d599496.vercel.app/",
+          url: "https://zurah1.vercel.app/",
         },
         entityData: data,
       },
@@ -43,7 +43,7 @@ export async function getServerSideProps(context) {
           title: "Zurah Jewellery",
           description: "Default Description",
           keywords: "Zurah, Jewellery",
-          url: "https://zurah1-pareshs-projects-3d599496.vercel.app/",
+          url: "https://zurah1.vercel.app/",
         },
         entityData: {},
       },
