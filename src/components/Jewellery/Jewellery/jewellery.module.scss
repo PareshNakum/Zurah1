@@ -1,0 +1,135 @@
+#product-details {
+    .product-category {
+
+        p,
+        a {
+            color: var(--theme-title-color);
+        }
+
+        .accordion {
+            .accordion-body {
+                max-height: 300px;
+                overflow: auto;
+            }
+        }
+
+        .side-filter {
+            max-height: calc(100vh - 60px);
+            overflow: auto;
+
+            &::-webkit-scrollbar {
+                width: 0 !important;
+            }
+        }
+    }
+
+    @media (max-width: 992px) {
+        .product-category {
+            margin-bottom: 24px;
+        }
+    }
+
+    .showing-data {
+        color: var(--theme-title-color);
+    }
+
+    @media only screen and (min-device-width: 992px) and (max-device-width: 1200px) {
+        .accordion-item {
+            .accordion-header {
+                .accordion-button {
+                    padding: 10px;
+                    font-size: 14px;
+                }
+            }
+
+            .accordion-body {
+                padding: 10px;
+
+                .form-check-label {
+                    font-size: 13px;
+                }
+            }
+        }
+    }
+
+    .filter-btn {
+        display: none;
+        color: var(--theme-title-color);
+
+    }
+
+    .filterShowClose {
+        display: none;
+    }
+
+    .filterShowOverlay {
+        display: none;
+    }
+
+
+    @media (max-width: 991px) {
+        .filter-btn {
+            display: block;
+        }
+
+        .filterShowDeskstop {
+            visibility: hidden;
+            opacity: 0;
+            width: 0;
+            padding: 0;
+        }
+
+        .filterShowClose {
+            display: block;
+            padding: 10px 12px;
+            text-align: end;
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-white);
+            z-index: 1;
+
+            i {
+                cursor: pointer;
+            }
+        }
+
+        .filterShowMobile {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100%;
+            background-color: #f5f5f5;
+            z-index: 9999;
+            overflow-x: hidden;
+            transition: 0.5s;
+            visibility: visible;
+            opacity: 1;
+            padding: 0;
+
+            .side-filter {
+                top: 0;
+                max-height: 100vh;
+            }
+
+            &+.filterShowOverlay {
+                display: block;
+            }
+            .filterShowMobileBody {
+                padding: 12px;
+            }
+        }
+
+        .filterShowOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-color: #000;
+            opacity: 0.4;
+            z-index: 9998;
+        }
+    }
+
+}

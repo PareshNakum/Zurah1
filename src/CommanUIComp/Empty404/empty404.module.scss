@@ -1,0 +1,19 @@
+#Empty404 {
+    .empty404-page {
+        text-align: center;
+        padding: 20px;
+        .empty404-page-title {
+            h1{
+                font-size: 15vw;
+                font-weight: var(--fw-500);
+            }
+        }
+        .btn {
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+        @media (max-width: 576px) {
+           padding: 30px;
+        }
+    }
+}

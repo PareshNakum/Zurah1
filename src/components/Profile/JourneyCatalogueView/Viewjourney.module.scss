@@ -1,0 +1,57 @@
+#viewJourney {
+    iframe {
+        height: 100vh;
+    }
+
+    .cunsumer_detail {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 20px 0 5px 0;
+        align-items: center;
+        font-size: 14px;
+        border-bottom: 1px solid var(--theme-text-color);
+
+        p {
+            margin: 0;
+        }
+
+        .apply_detail {
+            display: flex;
+            flex-wrap: wrap;
+
+            .active {
+                opacity: 1;
+
+                a {
+                    margin: 0 0 0 10px;
+                }
+            }
+
+            .icons {
+                opacity: 0;
+            }
+        }
+
+        .share_back {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+
+            .back_btn {
+                background-color: transparent;
+                border: none;
+                align-items: center;
+                color: var(--theme-text-color);
+                padding: 0;
+
+                i {
+                    margin: 0 5px 0 0;
+                }
+
+            }
+        }
+    }
+
+}

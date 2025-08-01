@@ -1,0 +1,145 @@
+.sign-in {
+    .modal-dialog {
+        max-width: 650px;
+        position: relative;
+        outline: none;
+        .modal-content {
+            .modal-header {
+                position: relative;
+                border-bottom: 0;
+                padding: 20px;
+                justify-content: flex-end;
+                .close-btn {
+                    i {
+                        font-weight: var(--fw-600);
+                    }
+                }
+            }
+            .modal-body {
+                margin: 0 auto;
+                width: 100%;
+                .logo {
+                    img {
+                        max-width: 200px;
+                    }
+                }
+                .signUp-input {
+                    background-color: var(--theme-bg-3);
+                    border: 0;
+                    padding: 13px 15px 13px 15px;
+                    line-height: 18px;
+                    font-size: var(--fs-14px);
+                }
+                .signUp-input-padd {
+                    padding: 13px 30px 13px 15px;
+                }
+                .form-check-label {
+                    label {
+                        vertical-align: middle;
+                    }
+                }
+                .signIn-btn {
+                    button {
+                        padding: 13px 15px;
+                        line-height: 18px;
+                        font-size: var(--fs-15px);
+                    }
+                }
+
+                .creat-account {
+                    text-align: center;
+                    p {
+                        span {
+                            color: var(--theme-text-color);
+                        }
+                        .sign-btn {
+                            color: var(--theme-title-color);
+                            cursor: pointer;
+                            font-weight: var(--fw-600);
+                            &:hover {
+                                color: var(--primary-button-hover);
+                            }
+                        }
+                    }
+                }
+                .btn-social {
+                    display: flex;
+                    justify-content: center;
+                    padding: 12px 15px;
+                    background-color: var(--theme-bg-3);
+                }
+
+                .pass-eye {
+                    position: absolute;
+                    top: 50%;
+                    right: 10px;
+                    transform: translateY(-50%);
+                    cursor: pointer;
+                }
+                .forget-password {
+                    .forget_link {
+                        font-weight: var(--fw-500);
+                        cursor: pointer;
+                        &:hover {
+                            color: var(--primary-button-hover);
+                        }
+                    }
+                }
+                .BackLogin {
+                    font-weight: var(--fw-500);
+                    cursor: pointer;
+                    &:hover {
+                        color: var(--primary-button-hover);
+                    }
+                }
+                .Login_Group {
+                    max-width: 480px;
+                    margin: 0 auto;
+                }
+            }
+            @media (max-width: 576px) {
+                .modal-body {
+                    padding: 0;
+                    .signUp-input {
+                        padding: 10px 10px 10px 10px;
+                        font-size: var(--fs-13px);
+                    }
+                    .SignUpForm {
+                        .SignUpCall {
+                            &.w_100 {
+                                width: 100%;
+                            }
+                        }
+                    }
+                    .profile-title {
+                        margin-bottom: 15px;
+                    }
+                }
+                .modal-header {
+                    padding: 15px;
+                }
+            }
+        }
+    }
+
+    @media (min-width: 350px) {
+        .rememberme-forgetpassword {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+    }
+    .SignUpForm {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        .SignUpCall {
+            width: 48%;
+            .form-select {
+                background-color: var(--theme-bg-3);
+                border: 0;
+                font-size: var(--fs-15px);
+            }
+        }
+    }
+}

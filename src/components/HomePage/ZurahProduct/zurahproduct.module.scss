@@ -1,0 +1,18 @@
+#best-product {
+    .product-slider {
+        .owl-theme {
+            position: relative;
+            .owl-stage-outer {
+                overflow: hidden;
+                .owl-stage {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-pack: center;
+                    -ms-flex-pack: center;
+                    justify-content: center;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,90 @@
+#warranty-card {
+    .message_body {
+        background-color: var(--theme-bg-white);
+        padding: 25px;
+        box-shadow: rgba(206, 206, 206, 0.4) 1px 1px 10px;
+
+        .TearmCondition {
+            margin-top: 10px;
+
+            .terms_tilte {
+                font-weight: var(--fw-500);
+            }
+
+            .termscondition {
+                ul {
+                    list-style-type: none;
+                    padding-left: 0;
+                    margin-bottom: 0;
+
+                    li {
+                        font-size: 13px;
+                        padding-bottom: 5px;
+                    }
+                }
+            }
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+
+    .wcard-input {
+        p {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+    }
+
+    Table {
+
+        overflow: auto;
+        background-color: var(--theme-bg-white);
+
+        thead {
+            color: var(--theme-title-color);
+
+            tr {
+                th {
+                    font-weight: 400;
+                    font-size: 12px !important;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    font-size: 12px !important;
+                    border: 1px solid var(--bs-border-color);
+
+                    .edit_btn {
+                        cursor: pointer;
+                    }
+
+                    p {
+                        font-size: 15px !important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.input-text {
+    outline: 0;
+    border: 1px solid rgb(229, 229, 229);
+    border-radius: 0;
+    padding: 10px;
+    display: block;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--theme-text-color);
+    background-clip: padding-box;
+    appearance: none;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    box-shadow: none !important;
+}
