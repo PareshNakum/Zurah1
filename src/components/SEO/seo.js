@@ -28,23 +28,23 @@ const Seo = ({
       <title>{title}</title>
       <link rel="canonical" href={canonicalUrl} />
 
-      <meta name="description" content={description} />
-      <meta name="keywords" content={keywords} />
-      {noIndex && <meta name="robots" content="noindex, nofollow" />}
+      <meta name="description" content={description}></meta>
+      <meta name="keywords" content={keywords}></meta>
+      {noIndex && <meta name="robots" content="noindex, nofollow"></meta>}
 
       {/* Open Graph */}
-      <meta property="og:type" content={type} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={image || fallbackImage} />
-      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:type" content={type}></meta>
+      <meta property="og:title" content={title}></meta>
+      <meta property="og:description" content={description}></meta>
+      <meta property="og:image" content={image || fallbackImage}></meta>
+      <meta property="og:url" content={canonicalUrl}></meta>
 
       {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={image || fallbackImage} />
-      <meta property="twitter:url" content={canonicalUrl} />
+      <meta name="twitter:card" content="summary_large_image"></meta>
+      <meta name="twitter:title" content={title}></meta>
+      <meta name="twitter:description" content={description}></meta>
+      <meta name="twitter:image" content={image || fallbackImage}></meta>
+      <meta property="twitter:url" content={canonicalUrl}></meta>
 
       {/* Structured Data */}
       <script
