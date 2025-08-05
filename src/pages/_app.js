@@ -36,49 +36,6 @@ const Header = dynamic(
   }
 );
 
-export async function generateMetadata() {
-  const origin = "https://zurah1.vercel.app/";
-
-  const response = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      origin,
-      prefer: origin,
-    },
-    body: JSON.stringify({
-      a: "GetStoreData",
-      store_domain: origin,
-      SITDeveloper: "1",
-    }),
-  });
-
-  const result = await response.json();
-  const storeEntityIds = result?.success === 1 ? result?.data : {};
-
-  const previewImage = storeEntityIds?.preview_image?.startsWith("http")
-    ? storeEntityIds?.preview_image
-    : `${origin}/default-og.jpg`;
-
-  return {
-    title: storeEntityIds?.seo_titles || "Zurah Jewellery",
-    description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
-    keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
-    openGraph: {
-      title: storeEntityIds?.seo_titles || "Zurah Jewellery",
-      description: storeEntityIds?.seo_description,
-      url: origin,
-      images: [{ url: previewImage }],
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: storeEntityIds?.seo_titles,
-      description: storeEntityIds?.seo_description,
-      images: [previewImage],
-    },
-  };
-}
 function InnerApp({ Component, pageProps }) {
   console.log(pageProps);
   const dispatch = useDispatch();
@@ -307,13 +264,13 @@ function InnerApp({ Component, pageProps }) {
         src="https://cdn.tangiblee.com/integration/3.1/managed/www.tangiblee-integration.com/revision_1/variation_original/tangiblee-bundle.min.js"
       />
 
-      {/* <Seo
+      <Seo
         title={pageProps.seoData.title}
         keywords={pageProps.seoData.keywords}
         description={pageProps.seoData.description}
         image={pageProps.seoData.image}
         url={pageProps.seoData.url}
-      /> */}
+      />
       <Suspense fallback={<Loader />}>
         <Header storeData={storeEntityIds} />
         <Component {...pageProps} />
