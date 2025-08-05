@@ -8,25 +8,18 @@ import { Commanservice } from "@/CommanService/commanService";
 import axios from "axios";
 
 export async function getServerSideProps(context) {
-  const origin =
-    context.req.headers.origin ||
-    (context.req.headers.host
-      ? `https://${context.req.headers.host}`
-      : "https://zurah1.vercel.app");
-
-  const commanService = new Commanservice(origin);
 
  try {
     const res = await axios.post(
-      "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
+      "http://192.168.84.45/sit-ci-api/call/EmbeddedPageMaster",
       {
         a: "GetStoreData",
-        store_domain: "https://zurah1.vercel.app/",
+        store_domain: "https://uat.zurahjewellery.com/",
         SITDeveloper: "1",
       },
       {
         headers: {
-          origin: "https://zurah1.vercel.app/",
+          origin: "https://uat.zurahjewellery.com/",
         },
       }
     );
@@ -63,7 +56,7 @@ export async function getServerSideProps(context) {
 
 export default function Home({ seoData, entityData }) {
   const dispatch = useDispatch();
-
+console.log(seoData)
   useEffect(() => {
     if (entityData && Object.keys(entityData).length > 0) {
       // dispatch(storeEntityId(entityData));

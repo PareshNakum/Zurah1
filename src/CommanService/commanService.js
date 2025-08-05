@@ -7,21 +7,21 @@ function getEnv(origin) {
 
   const source = origin || (isBrowser ? window.location.origin : "https://zurah1.vercel.app/")
 
-  if (source?.includes("localhost")) {
+  if (source.includes("localhost")) {
     env = {
       imageUrl: "http://192.168.84.21:8080",
       baseUrl1: "http://192.168.84.21:8080/api/call",
       baseUrl2: "http://192.168.84.45/sit-ci-api/call",
       domain: "https://zurah1.vercel.app/",
     };
-  } else if (source?.includes("staging")) {
+  } else if (source.includes("staging")) {
     env = {
       imageUrl: "https://apistaging-ecom-store.upqor.com",
       baseUrl1: "https://apistaging-ecom-store.upqor.com/api/call",
       baseUrl2: "https://apistaging-ecom.upqor.com/call",
       domain: source,
     };
-  } else if (source?.includes("uat")) {
+  } else if (source.includes("uat")) {
     env = {
       imageUrl: "https://apiuat-ecom-store.upqor.com",
       baseUrl1: "https://apiuat-ecom-store.upqor.com/api/call",
