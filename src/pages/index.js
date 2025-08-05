@@ -1,7 +1,10 @@
-// app/page.tsx or app/page.js
+// pages/index.js
+import Homes from "@/components/HomePage/Home/homes";
+import Seo from "@/components/SEO/seo";
+import { Commanservice } from "@/CommanService/commanService";
 
 export async function generateMetadata({ params, searchParams }) {
-  const host = process.env.NEXT_PUBLIC_SITE_URL || 'https://zurah1.vercel.app';
+  const host = process.env.NEXT_PUBLIC_SITE_URL || 'https://zurah1.vercel.app/';
   const apiUrl = "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster";
 
   const res = await fetch(apiUrl, {
@@ -31,10 +34,11 @@ export async function generateMetadata({ params, searchParams }) {
   };
 }
 
-export default function HomePage() {
+export default function HomePage({ seoData, entityData }) {
   return (
-    <div>
-      <Homes />
-    </div>
+    <>
+      <Seo {...pageProps.seoData} />
+      <Homes entityData={entityData} />
+    </>
   );
 }

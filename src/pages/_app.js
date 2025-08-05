@@ -26,7 +26,6 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-inner-image-zoom/lib/styles.min.css";
-import Seo from "@/components/SEO/seo";
 
 // Dynamic imports for better performance
 const Header = dynamic(
@@ -311,7 +310,6 @@ function InnerApp({ Component, pageProps }) {
       />
 
       <Suspense fallback={<Loader />}>
-        <Seo {...pageProps.seoData} />
         <Header storeData={storeEntityIds} />
         <Component {...pageProps} />
         <Footer />
