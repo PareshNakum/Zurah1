@@ -18,7 +18,7 @@ export async function getServerSideProps(context) {
 
   try {
     const res = await axios.post(
-      "https://apiuat-ecom-store.upqor.com/api/call/EmbeddedPageMaster",
+      "https://apiuat-ecom-store.upqor.com/api/EmbeddedPageMaster",
       {
         a: "GetStoreData",
         store_domain: "https://zurah1.vercel.app/",
