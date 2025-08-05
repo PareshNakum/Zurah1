@@ -3,12 +3,21 @@ const nextConfig = {
   // reactStrictMode: true,
   // output: 'export',
   // trailingSlash: true,
-  headers: [
-    {
-      key: "Cache-Control",
-      value: "public, max-age=0, must-revalidate",
-    },
-  ],
+
+  async headers() {
+    return [
+      {
+        source: "/(.*)", // Applies headers to all routes
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, must-revalidate",
+          },
+        ],
+      },
+    ];
+  },
+
   images: {
     unoptimized: true,
     domains: [

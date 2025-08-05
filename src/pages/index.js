@@ -1,93 +1,41 @@
+// pages/index.js
 import Homes from "@/components/HomePage/Home/homes";
-import Seo from "@/components/SEO/seo";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
-import axios from "axios";
 
-export async function getServerSideProps(context) {
-  const origin =
-    context.req.headers.origin ||
-    (context.req.headers.host
-      ? `https://${context.req.headers.host}`
-      : "https://zurah1.vercel.app/");
+export async function getServerSideProps() {
+  const origin = "https://zurah1.vercel.app/";
 
-  // Return inside .then() by wrapping everything in a Promise
-  return axios
-    .post(
-      "https://apiuat-ecom-store.upqor.com/api/EmbeddedPageMaster",
-      {
-        a: "GetStoreData",
-        store_domain: origin,
-        SITDeveloper: "1",
+  const response = await fetch("http://192.168.84.45/sit-ci-api/call/EmbeddedPageMaster", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      origin,
+      prefer: origin,
+    },
+    body: JSON.stringify({
+      a: "GetStoreData",
+      store_domain: origin,
+      SITDeveloper: "1",
+    }),
+  });
+
+  const result = await response.json();
+  const storeEntityIds = result?.success === 1 ? result?.data : {};
+
+  return {
+    props: {
+      storeEntityIds,
+      seoData: {
+        title: storeEntityIds?.seo_titles || "Zurah Jewellery",
+        description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
+        keywords: storeEntityIds?.seo_keywords || "Zurah, Jewellery",
+        image: storeEntityIds?.preview_image,
+        url: origin,
       },
-      {
-        headers: {
-          origin,
-          prefer: origin,
-        },
-      }
-    )
-    .then((res) => {
-      const success = res?.data?.success === 1;
-      const data = res?.data?.data || {};
-
-      return {
-        props: {
-          seoData: {
-            title: success ? data?.seo_titles : "Zurah Jewellery",
-            description: success
-              ? data?.seo_description
-              : "Elegant jewellery for all occasions",
-            keywords: success
-              ? data?.seo_keywords
-              : "Zurah, Jewellery, Diamonds",
-            image: success
-              ? data?.preview_image
-              : "https://zurah1.vercel.app/default-og.jpg",
-            url: origin,
-          },
-          entityData: success ? data : {},
-        },
-      };
-    })
-    .catch((err) => {
-      console.error("❌ Server-side fetch error:", err);
-      return {
-        props: {
-          seoData: {
-            title: "Zurah Jewellery",
-            description: "Elegant jewellery for all occasions",
-            keywords: "Zurah, Jewellery, Diamonds",
-            image: "https://zurah1.vercel.app/default-og.jpg",
-            url: origin,
-          },
-          entityData: {},
-        },
-      };
-    });
+    },
+  };
 }
 
-export default function Home({ seoData, entityData }) {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (entityData && Object.keys(entityData).length > 0) {
-      dispatch(storeEntityId(entityData));
-      sessionStorage.setItem("storeData", JSON.stringify(entityData));
-    }
-  }, [dispatch, entityData]);
-
-  return (
-    <>
-      <Seo
-        title={seoData?.title}
-        description={seoData?.description}
-        keywords={seoData?.keywords}
-        image={seoData?.image}
-        url={seoData?.url}
-      />
-      <Homes entityData={entityData} />
-    </>
-  );
+export default function Page({ storeEntityIds }) {
+  return <Homes entityData={storeEntityIds} />;
 }

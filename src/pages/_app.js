@@ -26,16 +26,18 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-inner-image-zoom/lib/styles.min.css";
+import Seo from "@/components/SEO/seo";
 
 // Dynamic imports for better performance
 const Header = dynamic(
   () => import("@/components/HeaderFooter/Header/header"),
   {
-    ssr: true,
+    ssr: false,
   }
 );
 
 function InnerApp({ Component, pageProps }) {
+  console.log(pageProps)
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -219,65 +221,6 @@ function InnerApp({ Component, pageProps }) {
     };
   }, [pageProps?.storeEntityIds, getStoreData, safeDispatch]);
 
-  useEffect(() => {
-    
-    var count = 0;
-    var count2 = 0;
-    setInterval(() => {
-      // Product Height
-      var className2 = document.querySelector(".product-img-separate");
-      if (className2 !== null && className2 !== undefined && className2 !== "") {
-        var divElement2 = document.querySelector(".product-img-separate");
-        if (divElement2.getBoundingClientRect() !== null && divElement2.getBoundingClientRect() !== undefined) {
-          var elemRect2 = divElement2.getBoundingClientRect();
-          var elemHeight2 = elemRect2.width;
-          if (elemHeight2 !== 0) {
-            var height2 = document.getElementsByClassName('figure');
-            if (height2.length > count2) {
-              height2[count2].setAttribute("style", `height:${elemHeight2 + "px"};`);
-              count2++;
-            } else {
-              count2 = 0;
-            }
-          }
-        }
-      }
-
-      // Skeleton Height
-      var className = document.getElementsByClassName("Skeleton");
-      if (className !== null && className !== undefined && className.length > 0) {
-        var divElement = document.querySelector(".Skeleton");
-        if (divElement.getBoundingClientRect() !== null && divElement.getBoundingClientRect() !== undefined) {
-          var elemRect = divElement.getBoundingClientRect();
-          var elemHeight = elemRect.width;
-          var height = document.getElementsByClassName('Skeleton');
-          if (height.length > count) {
-            height[count].setAttribute("style", `height:${elemHeight + "px"};`);
-            count++;
-          } else {
-            count = 0;
-          }
-        }
-      }
-
-      // loader hidden
-      var loader = document.getElementById("loader");
-      var body = document.getElementById("body");
-      var active = document.getElementsByClassName("navbar-toggler active");
-      var lgactive = document.getElementsByClassName('product-detail_right');
-      if (loader !== null || active.length > 0) {
-        // body.setAttribute("style", "overflow:hidden;");
-        // if (lgactive.length == 0) {
-        //   window.scrollTo(0, 0);
-        // }
-      } else {
-        if (active.length === 0) {
-          // body.setAttribute("style", "overflow:visible;")
-        }
-      }
-    }, 1);
-  }, []);
-
 
   // Show loading state
   if (!loaded) {
@@ -293,6 +236,13 @@ function InnerApp({ Component, pageProps }) {
 
   return (
     <>
+    <Seo
+      title={pageProps.seoData.title}
+      keyword={pageProps.seoData.keyword}
+      description={pageProps.seoData.description}
+      image={pageProps.seoData.image}
+      url={pageProps.seoData.url}
+    />
       <Script id="google-analytics1" async src="https://www.googletagmanager.com/gtag/js?id=G-R6XBQY8QGN" />
       <Script id="google-analytics2" dangerouslySetInnerHTML={{
         __html: `
