@@ -1,19 +1,22 @@
+// pages/_app.js
 import React, {
   useEffect,
   useCallback,
-  Suspense,
   useState,
   useMemo,
+  Suspense,
 } from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import Script from "next/script";
-import { wrapper } from "@/Redux/wrapper";
-import Loader from "@/CommanUIComp/Loader/Loader";
-import Footer from "@/components/HeaderFooter/Footer/footer";
-import commanService from "@/CommanService/commanService";
-import { storeCurrency, storeEntityId } from "@/Redux/action";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
+
+import { wrapper } from "@/Redux/wrapper";
+import { storeCurrency, storeEntityId } from "@/Redux/action";
+
+import Loader from "@/CommanUIComp/Loader/Loader";
+import Footer from "@/components/HeaderFooter/Footer/footer";
+import Seo from "@/components/SEO/seo";
 
 // CSS Imports
 import "swiper/css";
@@ -26,58 +29,41 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-inner-image-zoom/lib/styles.min.css";
-import Seo from "@/components/SEO/seo";
 
-// Dynamic imports for better performance
-const Header = dynamic(
-  () => import("@/components/HeaderFooter/Header/header"),
-  {
-    ssr: false,
-  }
-);
+// Constants
+const STORE_DOMAIN = "https://zurah1.vercel.app/";
+const MAX_RETRY_ATTEMPTS = 3;
+
+// Dynamic imports
+const Header = dynamic(() => import("@/components/HeaderFooter/Header/header"), { ssr: false });
 
 function InnerApp({ Component, pageProps }) {
-  console.log(pageProps);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // Redux selectors with error handling
   const storeEntityIds = useSelector((state) => state?.storeEntityId || {});
-  const storeCurrencyState = useSelector((state) => state?.storeCurrency || "");
-
-  // Local state
   const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [error, setError] = useState(null);
 
-  // Constants
-  const MAX_RETRY_ATTEMPTS = 3;
-  const STORE_DOMAIN = "https://zurah1.vercel.app/";
+  const isStoreDataValid = useMemo(
+    () => storeEntityIds?.tenant_id,
+    [storeEntityIds]
+  );
 
-  // Safe dispatch wrapper
   const safeDispatch = useCallback(
     (action) => {
-      try {
-        if (dispatch && typeof dispatch === "function") {
+      if (typeof dispatch === "function") {
+        try {
           dispatch(action);
+        } catch (error) {
+          console.error("Dispatch error in _app.js:", error);
         }
-      } catch (error) {
-        console.error("Dispatch error in _app.js:", error);
       }
     },
     [dispatch]
   );
 
-  // Memoized store data validation
-  const isStoreDataValid = useMemo(() => {
-    return (
-      storeEntityIds &&
-      typeof storeEntityIds === "object" &&
-      storeEntityIds.tenant_id
-    );
-  }, [storeEntityIds]);
-
-  // Get store data with retry logic
   const getStoreData = useCallback(
     async (attempt = 1) => {
       try {
@@ -87,11 +73,7 @@ function InnerApp({ Component, pageProps }) {
           SITDeveloper: "1",
         };
 
-        console.log(
-          `🚀 Fetching store data (attempt ${attempt}/${MAX_RETRY_ATTEMPTS})`
-        );
-
-        const res = await fetch(
+        const response = await fetch(
           "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
           {
             method: "POST",
@@ -100,124 +82,68 @@ function InnerApp({ Component, pageProps }) {
               STORE_DOMAIN,
               prefer: STORE_DOMAIN,
             },
-            body: JSON.stringify({
-              a: "GetStoreData",
-              store_domain: STORE_DOMAIN,
-              SITDeveloper: "1",
-            }),
+            body: JSON.stringify(payload),
           }
         );
 
-        if (res?.data?.success === 1) {
-          const data = res.data.data;
+        const result = await response.json();
+        const data = result?.data?.data;
 
-          // Validate required data
-          if (!data || !data.tenant_id) {
-            throw new Error("Invalid store data received");
-          }
-
+        if (result?.success === 1 && data?.tenant_id) {
           safeDispatch(storeEntityId(data));
           safeDispatch(storeCurrency(data?.store_currency || "USD"));
-
-          if (typeof window !== "undefined") {
-            sessionStorage.setItem("storeData", JSON.stringify(data));
-          }
-
+          sessionStorage.setItem("storeData", JSON.stringify(data));
           setLoaded(true);
-          setError(null);
           setRetryCount(0);
-
-          console.log("✅ Store data loaded successfully");
         } else {
-          throw new Error(res?.data?.message || "Failed to fetch store data");
+          throw new Error("Invalid store data received");
         }
       } catch (err) {
-        console.error(
-          `❌ Error fetching store data (attempt ${attempt}):`,
-          err
-        );
-
         if (attempt < MAX_RETRY_ATTEMPTS) {
           setRetryCount(attempt);
-          // Exponential backoff: 1s, 2s, 4s
-          const delay = Math.pow(2, attempt - 1) * 1000;
-          setTimeout(() => {
-            getStoreData(attempt + 1);
-          }, delay);
+          setTimeout(() => getStoreData(attempt + 1), 1000 * 2 ** (attempt - 1));
         } else {
-          setError(err.message || "Failed to load store data");
+          console.error("Store data load failed:", err);
+          setError(err.message);
+          sessionStorage.setItem("storeData", "false");
           setLoaded(true);
-
-          if (typeof window !== "undefined") {
-            sessionStorage.setItem("storeData", "false");
-          }
         }
       }
     },
     [safeDispatch]
   );
 
-  // Initialize store data
   useEffect(() => {
     let isMounted = true;
 
     const initializeStoreData = async () => {
-      try {
-        if (typeof window === "undefined") return;
+      if (typeof window === "undefined") return;
 
-        // Check for cached data first
-        const stored = sessionStorage.getItem("storeData");
+      const cached = sessionStorage.getItem("storeData");
 
-        if (stored && stored !== "false") {
-          try {
-            const parsed = JSON.parse(stored);
-
-            if (parsed && parsed.tenant_id) {
-              safeDispatch(storeEntityId(parsed));
-              safeDispatch(storeCurrency(parsed?.store_currency || "USD"));
-
-              if (isMounted) {
-                setLoaded(true);
-                console.log("✅ Store data loaded from cache");
-              }
-              return;
-            }
-          } catch (parseError) {
-            console.error("Error parsing cached store data:", parseError);
-            sessionStorage.removeItem("storeData");
+      if (cached && cached !== "false") {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed?.tenant_id) {
+            safeDispatch(storeEntityId(parsed));
+            safeDispatch(storeCurrency(parsed?.store_currency || "USD"));
+            if (isMounted) setLoaded(true);
+            return;
           }
-        }
-
-        // Check for SSR data
-        if (pageProps?.storeEntityIds && pageProps.storeEntityIds.tenant_id) {
-          safeDispatch(storeEntityId(pageProps.storeEntityIds));
-          safeDispatch(
-            storeCurrency(pageProps.storeEntityIds?.store_currency || "USD")
-          );
-
-          sessionStorage.setItem(
-            "storeData",
-            JSON.stringify(pageProps.storeEntityIds)
-          );
-
-          if (isMounted) {
-            setLoaded(true);
-            console.log("✅ Store data loaded from SSR");
-          }
-          return;
-        }
-
-        // Fetch fresh data
-        if (isMounted) {
-          await getStoreData();
-        }
-      } catch (error) {
-        console.error("Error initializing store data:", error);
-        if (isMounted) {
-          setError(error.message);
-          setLoaded(true);
+        } catch {
+          sessionStorage.removeItem("storeData");
         }
       }
+
+      if (pageProps?.storeEntityIds?.tenant_id) {
+        safeDispatch(storeEntityId(pageProps.storeEntityIds));
+        safeDispatch(storeCurrency(pageProps.storeEntityIds?.store_currency || "USD"));
+        sessionStorage.setItem("storeData", JSON.stringify(pageProps.storeEntityIds));
+        if (isMounted) setLoaded(true);
+        return;
+      }
+
+      if (isMounted) await getStoreData();
     };
 
     initializeStoreData();
@@ -227,33 +153,24 @@ function InnerApp({ Component, pageProps }) {
     };
   }, [pageProps?.storeEntityIds, getStoreData, safeDispatch]);
 
-  // Show loading state
-  if (!loaded) {
-    return <Loader />;
-  }
+  if (!loaded) return <Loader />;
 
-  // Show warning if store data is invalid but continue
   if (!isStoreDataValid) {
-    console.warn(
-      "⚠️ Store data is invalid or incomplete, continuing with defaults"
-    );
+    console.warn("⚠️ Store data is invalid or incomplete.");
   }
 
   return (
     <>
+      {/* Scripts */}
+      <Script async src="https://www.googletagmanager.com/gtag/js?id=G-R6XBQY8QGN" />
       <Script
-        id="google-analytics1"
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-R6XBQY8QGN"
-      />
-      <Script
-        id="google-analytics2"
+        id="google-analytics"
         dangerouslySetInnerHTML={{
           __html: `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-R6XBQY8QGN');
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-R6XBQY8QGN');
           `,
         }}
       />
@@ -264,32 +181,67 @@ function InnerApp({ Component, pageProps }) {
         src="https://cdn.tangiblee.com/integration/3.1/managed/www.tangiblee-integration.com/revision_1/variation_original/tangiblee-bundle.min.js"
       />
 
-      {/* <Seo
-        title={pageProps.seoData.title}
-        keywords={pageProps.seoData.keywords}
-        description={pageProps.seoData.description}
-        // image={pageProps.seoData.image}
-        url={pageProps.seoData.url}
-      /> */}
-      <Suspense fallback={<Loader />}>
-        <Header storeData={storeEntityIds} />
-        <Component {...pageProps} />
-        <Footer />
-      </Suspense>
+      <Header storeData={storeEntityIds} />
+      <Component {...pageProps} />
+      <Footer />
     </>
   );
 }
 
-function App({ Component, ...rest }) {
-  const { store, props } = wrapper.useWrappedStore(rest);
+function App({ Component, pageProps, seoData }) {
+  const { store } = wrapper.useWrappedStore({ pageProps });
 
   return (
     <Provider store={store}>
-      <Suspense fallback={<Loader />}>
-        <InnerApp Component={Component} pageProps={props.pageProps} />
-      </Suspense>
+      <Seo
+        title={seoData.title}
+        keywords={seoData.keywords}
+        description={seoData.description}
+        url={seoData.url}
+      />
+      <InnerApp Component={Component} pageProps={pageProps} />
     </Provider>
   );
 }
+
+// ✅ Fixed name from MyApp to App
+App.getInitialProps = async (appContext) => {
+  const origin = STORE_DOMAIN;
+
+  const res = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      origin,
+      prefer: origin,
+    },
+    body: JSON.stringify({
+      a: "GetStoreData",
+      store_domain: origin,
+      SITDeveloper: "1",
+    }),
+  });
+
+  const result = await res.json();
+  const storeEntityIds = result?.success === 1 ? result?.data?.data : {};
+
+  const seoData = {
+    title: storeEntityIds?.seo_titles || "Zurah Jewellery",
+    description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
+    keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
+    url: origin,
+  };
+
+  const appProps = await App.getInitialProps?.(appContext);
+
+  return {
+    ...appProps,
+    seoData,
+    pageProps: {
+      ...appProps?.pageProps,
+      storeEntityIds,
+    },
+  };
+};
 
 export default App;
