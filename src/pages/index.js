@@ -11,7 +11,7 @@ export async function getServerSideProps(context) {
     context.req.headers.origin ||
     (context.req.headers.host
       ? `https://${context.req.headers.host}`
-      : "https://zurah1.vercel.app");
+      : "https://zurah1.vercel.app/");
 
   const commanService = new Commanservice(origin);
 
@@ -20,12 +20,13 @@ export async function getServerSideProps(context) {
       "/EmbeddedPageMaster",
       {
         a: "GetStoreData",
-        store_domain: "https://zurah1.vercel.app",
+        store_domain: "https://zurah1.vercel.app/",
         SITDeveloper: "1",
       },
       {
         headers: {
-          origin: "https://zurah1.vercel.app",
+          origin: "https://zurah1.vercel.app/",
+          prefer: "https://zurah1.vercel.app/",
         },
       }
     );

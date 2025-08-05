@@ -15,7 +15,7 @@ import { storeCurrency, storeEntityId } from "@/Redux/action";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
-// CSS Imports
+// Styles
 import "swiper/css";
 import "swiper/css/navigation";
 import "@/Assets/css/bootstrap.min.css";
@@ -27,57 +27,39 @@ import "owl.carousel/dist/assets/owl.theme.default.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-inner-image-zoom/lib/styles.min.css";
 
-// Dynamic imports for better performance
-const Header = dynamic(
-  () => import("@/components/HeaderFooter/Header/header"),
-  {
-    ssr: false,
-  }
-);
+// Dynamic Header import
+const Header = dynamic(() => import("@/components/HeaderFooter/Header/header"), {
+  ssr: false,
+});
 
 function InnerApp({ Component, pageProps }) {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // Redux selectors with error handling
   const storeEntityIds = useSelector((state) => state?.storeEntityId || {});
   const storeCurrencyState = useSelector((state) => state?.storeCurrency || "");
-
-  // Local state
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
 
-  // Constants
   const MAX_RETRY_ATTEMPTS = 3;
   const STORE_DOMAIN = "https://zurah1.vercel.app/";
+  const TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-  // Safe dispatch wrapper
-  const safeDispatch = useCallback(
-    (action) => {
-      try {
-        if (dispatch && typeof dispatch === "function") {
-          dispatch(action);
-        }
-      } catch (error) {
-        console.error("Dispatch error in _app.js:", error);
-      }
-    },
-    [dispatch]
-  );
+  const safeDispatch = useCallback((action) => {
+    try {
+      dispatch(action);
+    } catch (error) {
+      console.error("Dispatch error:", error);
+    }
+  }, [dispatch]);
 
-  // Memoized store data validation
   const isStoreDataValid = useMemo(() => {
-    return (
-      storeEntityIds &&
-      typeof storeEntityIds === "object" &&
-      storeEntityIds.tenant_id
-    );
+    return storeEntityIds && typeof storeEntityIds === "object" && storeEntityIds.tenant_id;
   }, [storeEntityIds]);
 
-  // Get store data with retry logic
   const getStoreData = useCallback(
-    async (attempt = 1) => {
+    async (attempt = 1, controller = null) => {
       try {
         const payload = {
           a: "GetStoreData",
@@ -85,61 +67,41 @@ function InnerApp({ Component, pageProps }) {
           SITDeveloper: "1",
         };
 
-        console.log(
-          `🚀 Fetching store data (attempt ${attempt}/${MAX_RETRY_ATTEMPTS})`
-        );
+        console.log(`⏳ Fetching store data (Attempt ${attempt}/${MAX_RETRY_ATTEMPTS})`);
+        const res = await commanService.postApi("/EmbeddedPageMaster", payload, {
+          headers: { origin: STORE_DOMAIN },
+          signal: controller?.signal,
+        });
 
-        const res = await commanService.postApi(
-          "/EmbeddedPageMaster",
-          payload,
-          {
-            headers: {
-              origin: STORE_DOMAIN,
-            },
-            timeout: 10000, // 10 second timeout
-          }
-        );
-
-        if (res?.data?.success === 1) {
+        if (res?.data?.success === 1 && res.data.data?.tenant_id) {
           const data = res.data.data;
-
-          // Validate required data
-          if (!data || !data.tenant_id) {
-            throw new Error("Invalid store data received");
-          }
 
           safeDispatch(storeEntityId(data));
           safeDispatch(storeCurrency(data?.store_currency || "USD"));
 
           if (typeof window !== "undefined") {
-            sessionStorage.setItem("storeData", JSON.stringify(data));
+            sessionStorage.setItem("storeData", JSON.stringify({
+              timestamp: Date.now(),
+              data,
+            }));
           }
 
           setLoaded(true);
-          setError(null);
           setRetryCount(0);
-
-          console.log("✅ Store data loaded successfully");
+          console.log("✅ Store data fetched successfully");
         } else {
-          throw new Error(res?.data?.message || "Failed to fetch store data");
+          throw new Error("Invalid response or missing tenant_id");
         }
       } catch (err) {
-        console.error(
-          `❌ Error fetching store data (attempt ${attempt}):`,
-          err
-        );
+        console.error(`❌ Store fetch error (Attempt ${attempt}):`, err.message);
 
         if (attempt < MAX_RETRY_ATTEMPTS) {
-          setRetryCount(attempt);
-          // Exponential backoff: 1s, 2s, 4s
           const delay = Math.pow(2, attempt - 1) * 1000;
-          setTimeout(() => {
-            getStoreData(attempt + 1);
-          }, delay);
+          setTimeout(() => getStoreData(attempt + 1, controller), delay);
+          setRetryCount(attempt);
         } else {
-          setError(err.message || "Failed to load store data");
+          setError("Failed to load store data");
           setLoaded(true);
-
           if (typeof window !== "undefined") {
             sessionStorage.setItem("storeData", "false");
           }
@@ -149,64 +111,48 @@ function InnerApp({ Component, pageProps }) {
     [safeDispatch]
   );
 
-  // Initialize store data
   useEffect(() => {
     let isMounted = true;
+    const controller = new AbortController();
 
     const initializeStoreData = async () => {
       try {
         if (typeof window === "undefined") return;
 
-        // Check for cached data first
-        const stored = sessionStorage.getItem("storeData");
-
-        if (stored && stored !== "false") {
+        const cached = sessionStorage.getItem("storeData");
+        if (cached && cached !== "false") {
           try {
-            const parsed = JSON.parse(stored);
-
-            if (parsed && parsed.tenant_id) {
-              safeDispatch(storeEntityId(parsed));
-              safeDispatch(storeCurrency(parsed?.store_currency || "USD"));
-
-              if (isMounted) {
-                setLoaded(true);
-                console.log("✅ Store data loaded from cache");
-              }
+            const parsed = JSON.parse(cached);
+            if (parsed.timestamp && Date.now() - parsed.timestamp < TTL) {
+              safeDispatch(storeEntityId(parsed.data));
+              safeDispatch(storeCurrency(parsed.data?.store_currency || "USD"));
+              setLoaded(true);
+              console.log("⚡ Loaded store data from cache");
               return;
             }
-          } catch (parseError) {
-            console.error("Error parsing cached store data:", parseError);
+          } catch (parseErr) {
+            console.warn("Session cache parse error:", parseErr.message);
             sessionStorage.removeItem("storeData");
           }
         }
 
-        // Check for SSR data
-        if (pageProps?.storeEntityIds && pageProps.storeEntityIds.tenant_id) {
+        if (pageProps?.storeEntityIds?.tenant_id) {
           safeDispatch(storeEntityId(pageProps.storeEntityIds));
-          safeDispatch(
-            storeCurrency(pageProps.storeEntityIds?.store_currency || "USD")
-          );
-
-          sessionStorage.setItem(
-            "storeData",
-            JSON.stringify(pageProps.storeEntityIds)
-          );
-
-          if (isMounted) {
-            setLoaded(true);
-            console.log("✅ Store data loaded from SSR");
-          }
+          safeDispatch(storeCurrency(pageProps.storeEntityIds?.store_currency || "USD"));
+          sessionStorage.setItem("storeData", JSON.stringify({
+            timestamp: Date.now(),
+            data: pageProps.storeEntityIds,
+          }));
+          setLoaded(true);
+          console.log("📦 Loaded store data from SSR");
           return;
         }
 
-        // Fetch fresh data
+        await getStoreData(1, controller);
+      } catch (err) {
+        console.error("Store data initialization error:", err);
         if (isMounted) {
-          await getStoreData();
-        }
-      } catch (error) {
-        console.error("Error initializing store data:", error);
-        if (isMounted) {
-          setError(error.message);
+          setError("Initialization failed");
           setLoaded(true);
         }
       }
@@ -216,26 +162,21 @@ function InnerApp({ Component, pageProps }) {
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
   }, [pageProps?.storeEntityIds, getStoreData, safeDispatch]);
 
+  if (!loaded) return <Loader />;
 
-  // Show loading state
-  if (!loaded) {
-    return <Loader />;
-  }
-
-  // Show warning if store data is invalid but continue
   if (!isStoreDataValid) {
-    console.warn(
-      "⚠️ Store data is invalid or incomplete, continuing with defaults"
-    );
+    console.warn("⚠️ Store data is incomplete, app will continue with fallback.");
   }
 
   return (
     <>
-      <Script id="google-analytics1" async src="https://www.googletagmanager.com/gtag/js?id=G-R6XBQY8QGN" />
-      <Script id="google-analytics2" dangerouslySetInnerHTML={{
+      {/* Analytics and Scripts */}
+      <Script id="ga-js" async src="https://www.googletagmanager.com/gtag/js?id=G-R6XBQY8QGN" />
+      <Script id="ga-init" dangerouslySetInnerHTML={{
         __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
@@ -244,12 +185,9 @@ function InnerApp({ Component, pageProps }) {
         `,
       }} />
       <Script id="jquery" src="/Assets/Js/jquery-3.6.1.min.js" defer />
-      <Script
-        id="tangiblee"
-        async
-        src="https://cdn.tangiblee.com/integration/3.1/managed/www.tangiblee-integration.com/revision_1/variation_original/tangiblee-bundle.min.js"
-      />
+      <Script id="tangiblee" async src="https://cdn.tangiblee.com/integration/3.1/managed/www.tangiblee-integration.com/revision_1/variation_original/tangiblee-bundle.min.js" />
 
+      {/* Layout */}
       <Suspense fallback={<Loader />}>
         <Header storeData={storeEntityIds} />
         <Component {...pageProps} />
