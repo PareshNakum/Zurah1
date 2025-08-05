@@ -264,13 +264,13 @@ function InnerApp({ Component, pageProps }) {
         src="https://cdn.tangiblee.com/integration/3.1/managed/www.tangiblee-integration.com/revision_1/variation_original/tangiblee-bundle.min.js"
       />
 
-      <Seo
+      {/* <Seo
         title={pageProps.seoData.title}
         keywords={pageProps.seoData.keywords}
         description={pageProps.seoData.description}
         // image={pageProps.seoData.image}
         url={pageProps.seoData.url}
-      />
+      /> */}
       <Suspense fallback={<Loader />}>
         <Header storeData={storeEntityIds} />
         <Component {...pageProps} />

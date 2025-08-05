@@ -1,4 +1,6 @@
+// pages/index.js
 import Homes from "@/components/HomePage/Home/homes";
+import { storeEntityId } from "@/Redux/action";
 import Head from "next/head";
 
 export async function getServerSideProps() {
@@ -19,11 +21,7 @@ export async function getServerSideProps() {
   });
 
   const result = await response.json();
-  const storeEntityIds = result?.success === 1 ? result?.data?.data : {};
-
-  // const previewImage = storeEntityIds?.preview_image?.startsWith("http")
-  //   ? storeEntityIds.preview_image
-  //   : `${origin}/default-og.jpg`;
+  const storeEntityIds = result?.success === 1 ? result?.data : {};
 
   return {
     props: {
@@ -32,8 +30,8 @@ export async function getServerSideProps() {
         title: storeEntityIds?.seo_titles || "Zurah Jewellery",
         description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
         keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
-        // image: previewImage,
-        url: "https://zurah1.vercel.app/",
+        // image: storeEntityIds?.preview_image,
+        url: origin,
       },
     },
   };
@@ -43,25 +41,23 @@ export default function Page({ storeEntityIds, seoData }) {
   return (
     <>
       <Head>
-        <title>{seoData.title}</title>
-        <meta name="description" content={seoData.description} />
-        <meta name="keywords" content={seoData.keywords} />
+        <title>{seoData?.title}</title>
+        <meta name="description" content={seoData?.description} />
+        <meta name="keywords" content={seoData?.keywords} />
 
-        {/* Open Graph */}
-        <meta property="og:title" content={seoData.title} />
-        <meta property="og:description" content={seoData.description} />
-        {/* <meta property="og:image" content={seoData.image} /> */}
-        <meta property="og:url" content={seoData.url} />
+        <meta property="og:title" content={seoData?.title} />
+        <meta property="og:description" content={seoData?.description} />
+        {/* <meta property="og:image" content={seoData?.image} /> */}
+        <meta property="og:url" content={seoData?.url} />
         <meta property="og:type" content="website" />
 
-        {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={seoData.title} />
-        <meta name="twitter:description" content={seoData.description} />
-        {/* <meta name="twitter:image" content={seoData.image} /> */}
+        <meta name="twitter:title" content={seoData?.title} />
+        <meta name="twitter:description" content={seoData?.description} />
+        {/* <meta name="twitter:image" content={seoData?.image} /> */}
       </Head>
 
       <Homes entityData={storeEntityIds} />
     </>
-  );
+  )
 }
