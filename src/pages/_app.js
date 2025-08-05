@@ -31,7 +31,7 @@ import "react-inner-image-zoom/lib/styles.min.css";
 const Header = dynamic(
   () => import("@/components/HeaderFooter/Header/header"),
   {
-    ssr: true,
+    ssr: false,
   }
 );
 
@@ -218,65 +218,6 @@ function InnerApp({ Component, pageProps }) {
       isMounted = false;
     };
   }, [pageProps?.storeEntityIds, getStoreData, safeDispatch]);
-
-  useEffect(() => {
-    
-    var count = 0;
-    var count2 = 0;
-    setInterval(() => {
-      // Product Height
-      var className2 = document.querySelector(".product-img-separate");
-      if (className2 !== null && className2 !== undefined && className2 !== "") {
-        var divElement2 = document.querySelector(".product-img-separate");
-        if (divElement2.getBoundingClientRect() !== null && divElement2.getBoundingClientRect() !== undefined) {
-          var elemRect2 = divElement2.getBoundingClientRect();
-          var elemHeight2 = elemRect2.width;
-          if (elemHeight2 !== 0) {
-            var height2 = document.getElementsByClassName('figure');
-            if (height2.length > count2) {
-              height2[count2].setAttribute("style", `height:${elemHeight2 + "px"};`);
-              count2++;
-            } else {
-              count2 = 0;
-            }
-          }
-        }
-      }
-
-      // Skeleton Height
-      var className = document.getElementsByClassName("Skeleton");
-      if (className !== null && className !== undefined && className.length > 0) {
-        var divElement = document.querySelector(".Skeleton");
-        if (divElement.getBoundingClientRect() !== null && divElement.getBoundingClientRect() !== undefined) {
-          var elemRect = divElement.getBoundingClientRect();
-          var elemHeight = elemRect.width;
-          var height = document.getElementsByClassName('Skeleton');
-          if (height.length > count) {
-            height[count].setAttribute("style", `height:${elemHeight + "px"};`);
-            count++;
-          } else {
-            count = 0;
-          }
-        }
-      }
-
-      // loader hidden
-      var loader = document.getElementById("loader");
-      var body = document.getElementById("body");
-      var active = document.getElementsByClassName("navbar-toggler active");
-      var lgactive = document.getElementsByClassName('product-detail_right');
-      if (loader !== null || active.length > 0) {
-        // body.setAttribute("style", "overflow:hidden;");
-        // if (lgactive.length == 0) {
-        //   window.scrollTo(0, 0);
-        // }
-      } else {
-        if (active.length === 0) {
-          // body.setAttribute("style", "overflow:visible;")
-        }
-      }
-    }, 1);
-  }, []);
 
 
   // Show loading state
