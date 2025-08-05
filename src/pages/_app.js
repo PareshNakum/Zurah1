@@ -79,8 +79,8 @@ function InnerApp({ Component, pageProps }) {
 
       const result = await response.json();
       const data = result?.data?.data;
-
-      if (result?.data?.success === 1 && data?.tenant_id) {
+      console.log(result)
+      if (result?.data?.success === 1) {
         safeDispatch(storeEntityId(data));
         safeDispatch(storeCurrency(data?.store_currency || "USD"));
         sessionStorage.setItem("storeData", JSON.stringify(data));
