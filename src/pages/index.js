@@ -57,7 +57,7 @@ export default function Page({ storeEntityIds, seoData }) {
         {/* <meta name="twitter:image" content={seoData?.image} /> */}
       </Head>
 
-      <Homes entityData={storeEntityIds} />
+      <Homes entityData={storeEntityIds} seoData={seoData}/>
     </>
   )
 }
