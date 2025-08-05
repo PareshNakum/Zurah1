@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
+import axios from "axios";
 
 export async function getServerSideProps(context) {
   const origin =
@@ -16,8 +17,8 @@ export async function getServerSideProps(context) {
   const commanService = new Commanservice(origin);
 
   try {
-    const res = await commanService.postApi(
-      "/EmbeddedPageMaster",
+    const res = await axios.post(
+      "https://apiuat-ecom-store.upqor.com/api/call/EmbeddedPageMaster",
       {
         a: "GetStoreData",
         store_domain: "https://zurah1.vercel.app/",
