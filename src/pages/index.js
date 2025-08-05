@@ -1,6 +1,7 @@
 // pages/index.js
 import Homes from "@/components/HomePage/Home/homes";
 import { storeEntityId } from "@/Redux/action";
+import Head from "next/head";
 
 export async function getServerSideProps() {
   const origin = "https://zurah1.vercel.app/";
@@ -36,6 +37,29 @@ export async function getServerSideProps() {
   };
 }
 
-export default function Page({ storeEntityIds }) {
-  return <Homes entityData={storeEntityIds} />;
+export default function Page({ storeEntityIds, seoData }) {
+  return (
+    <>
+      <Head>
+        <title>{seoData?.title}</title>
+        <meta name="description" content={seoData?.description} />
+        <meta name="keywords" content={seoData?.keywords} />
+
+        {/* Open Graph */}
+        <meta property="og:title" content={seoData?.title} />
+        <meta property="og:description" content={seoData?.description} />
+        <meta property="og:image" content={seoData?.image} />
+        <meta property="og:url" content={seoData?.url} />
+        <meta property="og:type" content="website" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoData?.title} />
+        <meta name="twitter:description" content={seoData?.description} />
+        <meta name="twitter:image" content={seoData?.image} />
+      </Head>
+
+      <Homes entityData={storeEntityIds} />
+    </>
+  )
 }
