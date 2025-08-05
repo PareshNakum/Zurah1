@@ -202,7 +202,7 @@ CustomApp.getInitialProps = async (appContext) => {
   });
 
   const result = await res.json();
-  const storeEntityIds = result?.success === 1 ? result?.data?.data : {};
+  const storeEntityIds = result?.data?.success === 1 ? result?.data?.data : {};
 
   const seoData = {
     title: storeEntityIds?.seo_titles || "Zurah Jewellery",
