@@ -22,7 +22,7 @@ export async function getServerSideProps() {
 
   const result = await response.json();
   console.log(result)
-  const storeEntityIds = result?.data?.success === 1 ? result?.data : {};
+  const storeEntityIds = result?.data?.success === 1 ? result?.data?.data : {};
 
   return {
     props: {

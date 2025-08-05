@@ -205,9 +205,9 @@ CustomApp.getInitialProps = async (appContext) => {
   const storeEntityIds = result?.data?.success === 1 ? result?.data?.data : {};
 
   const seoData = {
-    title: storeEntityIds?.seo_titles || "Zurah Jewellery",
-    description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
-    keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
+    title: storeEntityIds.seo_titles || "Zurah Jewellery",
+    description: storeEntityIds.seo_description || "Elegant jewellery for all occasions",
+    keywords: storeEntityIds.seo_keyword || "Zurah, Jewellery",
     url: origin,
   };
 
