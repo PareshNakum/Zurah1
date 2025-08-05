@@ -37,7 +37,7 @@ const Header = dynamic(
 );
 
 function InnerApp({ Component, pageProps }) {
-  console.log(pageProps)
+  console.log(pageProps);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -91,14 +91,20 @@ function InnerApp({ Component, pageProps }) {
           `🚀 Fetching store data (attempt ${attempt}/${MAX_RETRY_ATTEMPTS})`
         );
 
-        const res = await commanService.postApi(
-          "/EmbeddedPageMaster",
-          payload,
+        const res = await fetch(
+          "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
           {
+            method: "POST",
             headers: {
-              origin: STORE_DOMAIN,
+              "Content-Type": "application/json",
+              STORE_DOMAIN,
+              prefer: STORE_DOMAIN,
             },
-            timeout: 10000, // 10 second timeout
+            body: JSON.stringify({
+              a: "GetStoreData",
+              store_domain: STORE_DOMAIN,
+              SITDeveloper: "1",
+            }),
           }
         );
 
@@ -221,7 +227,6 @@ function InnerApp({ Component, pageProps }) {
     };
   }, [pageProps?.storeEntityIds, getStoreData, safeDispatch]);
 
-
   // Show loading state
   if (!loaded) {
     return <Loader />;
@@ -236,22 +241,29 @@ function InnerApp({ Component, pageProps }) {
 
   return (
     <>
-    <Seo
-      title={pageProps.seoData.title}
-      keyword={pageProps.seoData.keyword}
-      description={pageProps.seoData.description}
-      image={pageProps.seoData.image}
-      url={pageProps.seoData.url}
-    />
-      <Script id="google-analytics1" async src="https://www.googletagmanager.com/gtag/js?id=G-R6XBQY8QGN" />
-      <Script id="google-analytics2" dangerouslySetInnerHTML={{
-        __html: `
+      <Seo
+        title={pageProps.seoData.title}
+        keyword={pageProps.seoData.keyword}
+        description={pageProps.seoData.description}
+        image={pageProps.seoData.image}
+        url={pageProps.seoData.url}
+      />
+      <Script
+        id="google-analytics1"
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-R6XBQY8QGN"
+      />
+      <Script
+        id="google-analytics2"
+        dangerouslySetInnerHTML={{
+          __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', 'G-R6XBQY8QGN');
         `,
-      }} />
+        }}
+      />
       <Script id="jquery" src="/Assets/Js/jquery-3.6.1.min.js" defer />
       <Script
         id="tangiblee"
