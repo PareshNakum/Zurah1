@@ -1,62 +1,40 @@
-// pages/index.js
-import Homes from "@/components/HomePage/Home/homes";
-import Seo from "@/components/SEO/seo";
-import { Commanservice } from "@/CommanService/commanService";
+// app/page.tsx or app/page.js
 
-export async function getServerSideProps(context) {
-  const { req } = context;
-  const host = req.headers.host;
-  const protocol = req.headers['x-forwarded-proto'] || 'https';
-  const fullUrl = `${protocol}://${host}`;
-
-  const subdomain = host.split(".")[0];
-  let domain = fullUrl;
-
-  // Setup your API URL
+export async function generateMetadata({ params, searchParams }) {
+  const host = process.env.NEXT_PUBLIC_SITE_URL || 'https://zurah1.vercel.app';
   const apiUrl = "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster";
 
-  let seoData = {};
-  let entityData = null;
+  const res = await fetch(apiUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      a: "GetStoreData",
+      store_domain: host,
+    }),
+  });
 
-  try {
-    const res = await fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        a: "GetStoreData",
-        store_domain: domain,
-      }),
-    });
-
-    const json = await res.json();
-    const data = json?.data || {};
-
-    entityData = data;
-
-    seoData = {
-      title: data?.seo_titles || "Zurah Jewellery",
-      description: data?.seo_description || "Elegant fine jewellery for all occasions.",
-      keywords: data?.seo_keywords || "Zurah, Jewellery, Diamonds",
-      image: data?.preview_image || "https://zurah1.vercel.app/default-og.jpg",
-      url: domain,
-    };
-  } catch (error) {
-    console.error("SEO fetch error:", error);
-  }
+  const json = await res.json();
+  const data = json?.data || {};
 
   return {
-    props: {
-      seoData,
-      entityData,
+    title: data?.seo_titles || "Zurah Jewellery",
+    description: data?.seo_description || "Elegant fine jewellery for all occasions.",
+    keywords: data?.seo_keywords || "Zurah, Jewellery, Diamonds",
+    openGraph: {
+      images: [
+        {
+          url: data?.preview_image || "https://zurah1.vercel.app/default-og.jpg",
+        },
+      ],
+      url: host,
     },
   };
 }
 
-export default function HomePage({ seoData, entityData }) {
+export default function HomePage() {
   return (
-    <>
-      <Seo {...pageProps.seoData} />
-      <Homes entityData={entityData} />
-    </>
+    <div>
+      <Homes />
+    </div>
   );
 }
