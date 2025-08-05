@@ -31,7 +31,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import "react-inner-image-zoom/lib/styles.min.css";
 import NextApp from 'next/app';
 // Constants
-const STORE_DOMAIN = "https://uat.zurahjewellery.com";
+const STORE_DOMAIN = "https://zurah1.vercel.app/";
 const MAX_RETRY_ATTEMPTS = 3;
 
 // Dynamic imports
@@ -74,7 +74,7 @@ function InnerApp({ Component, pageProps }) {
         };
 
         const response = await fetch(
-          "http://192.168.84.45/sit-ci-api/call/EmbeddedPageMaster",
+          "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
           {
             method: "POST",
             headers: {
@@ -208,7 +208,7 @@ function App({ Component, pageProps, seoData }) {
  App.getInitialProps = async (appContext) => {
   const origin = STORE_DOMAIN;
 
-  const res = await fetch("http://192.168.84.45/sit-ci-api/call/EmbeddedPageMaster", {
+  const res = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

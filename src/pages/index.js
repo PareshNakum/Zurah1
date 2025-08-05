@@ -4,9 +4,9 @@ import { storeEntityId } from "@/Redux/action";
 import Head from "next/head";
 
 export async function getServerSideProps() {
-  const origin = "https://uat.zurahjewellery.com";
+  const origin = "https://zurah1.vercel.app/";
 
-  const response = await fetch("http://192.168.84.45/sit-ci-api/call/EmbeddedPageMaster", {
+  const response = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

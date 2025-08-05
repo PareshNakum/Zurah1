@@ -120,7 +120,7 @@ export async function getServerSideProps(context) {
         description: productData?.seo_description || "",
         keywords: productData?.seo_keyword || "Zurah, Jewellery",
         image: productData?.variant_data?.[0]?.image_urls?.[0] || "",
-        url: `https://uat.zurahjewellery.comproducts/${verticalCode}/${variantSlug}`,
+        url: `https://zurah1.vercel.app/products/${verticalCode}/${variantSlug}`,
       },
       entityData: productData,
     },

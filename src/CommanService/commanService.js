@@ -5,14 +5,14 @@ function getEnv(origin) {
   const isBrowser = typeof window !== "undefined";
   let env = {};
 
-  const source = origin || (isBrowser ? window.location.origin : "https://uat.zurahjewellery.com")
+  const source = origin || (isBrowser ? window.location.origin : "https://zurah1.vercel.app/")
 
   if (source.includes("localhost")) {
     env = {
       imageUrl: "http://192.168.84.21:8080",
       baseUrl1: "http://192.168.84.21:8080/api/call",
       baseUrl2: "http://192.168.84.45/sit-ci-api/call",
-      domain: "https://uat.zurahjewellery.com",
+      domain: "https://zurah1.vercel.app/",
     };
   } else if (source.includes("staging")) {
     env = {
@@ -33,7 +33,7 @@ function getEnv(origin) {
       imageUrl: "https://apiuat-ecom-store.upqor.com",
       baseUrl1: "https://apiuat-ecom-store.upqor.com/api/call",
       baseUrl2: "https://apiuat-ecom.upqor.com/call",
-      domain: "https://uat.zurahjewellery.com",
+      domain: "https://zurah1.vercel.app/",
     };
   }
 
