@@ -37,7 +37,6 @@ const Header = dynamic(
 );
 
 function InnerApp({ Component, pageProps }) {
-  const { seoData = {} } = pageProps;
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -311,8 +310,8 @@ function InnerApp({ Component, pageProps }) {
         src="https://cdn.tangiblee.com/integration/3.1/managed/www.tangiblee-integration.com/revision_1/variation_original/tangiblee-bundle.min.js"
       />
 
-        <Seo {...seoData} />
       <Suspense fallback={<Loader />}>
+        <Seo {...pageProps.seoData} />
         <Header storeData={storeEntityIds} />
         <Component {...pageProps} />
         <Footer />
