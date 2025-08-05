@@ -29,7 +29,7 @@ export async function getServerSideProps() {
       seoData: {
         title: storeEntityIds?.seo_titles || "Zurah Jewellery",
         description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
-        keywords: storeEntityIds?.seo_keywords || "Zurah, Jewellery",
+        keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
         image: storeEntityIds?.preview_image,
         url: origin,
       },

@@ -241,13 +241,6 @@ function InnerApp({ Component, pageProps }) {
 
   return (
     <>
-      <Seo
-        title={pageProps.seoData.title}
-        keywords={pageProps.seoData.keywords}
-        description={pageProps.seoData.description}
-        image={pageProps.seoData.image}
-        url={pageProps.seoData.url}
-      />
       <Script
         id="google-analytics1"
         async
@@ -261,7 +254,7 @@ function InnerApp({ Component, pageProps }) {
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', 'G-R6XBQY8QGN');
-        `,
+          `,
         }}
       />
       <Script id="jquery" src="/Assets/Js/jquery-3.6.1.min.js" defer />
@@ -271,6 +264,13 @@ function InnerApp({ Component, pageProps }) {
         src="https://cdn.tangiblee.com/integration/3.1/managed/www.tangiblee-integration.com/revision_1/variation_original/tangiblee-bundle.min.js"
       />
 
+      <Seo
+        title={pageProps.seoData.title}
+        keywords={pageProps.seoData.keywords}
+        description={pageProps.seoData.description}
+        image={pageProps.seoData.image}
+        url={pageProps.seoData.url}
+      />
       <Suspense fallback={<Loader />}>
         <Header storeData={storeEntityIds} />
         <Component {...pageProps} />
