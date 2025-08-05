@@ -29,7 +29,7 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-inner-image-zoom/lib/styles.min.css";
-
+import NextApp from 'next/app';
 // Constants
 const STORE_DOMAIN = "https://zurah1.vercel.app/";
 const MAX_RETRY_ATTEMPTS = 3;
@@ -89,7 +89,7 @@ function InnerApp({ Component, pageProps }) {
         const result = await response.json();
         const data = result?.data?.data;
 
-        if (result?.success === 1 && data?.tenant_id) {
+        if (result?.data?.success === 1 && data?.tenant_id) {
           safeDispatch(storeEntityId(data));
           safeDispatch(storeCurrency(data?.store_currency || "USD"));
           sessionStorage.setItem("storeData", JSON.stringify(data));
@@ -205,7 +205,7 @@ function App({ Component, pageProps, seoData }) {
 }
 
 // ✅ Fixed name from MyApp to App
-App.getInitialProps = async (appContext) => {
+ App.getInitialProps = async (appContext) => {
   const origin = STORE_DOMAIN;
 
   const res = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
@@ -223,7 +223,7 @@ App.getInitialProps = async (appContext) => {
   });
 
   const result = await res.json();
-  const storeEntityIds = result?.success === 1 ? result?.data?.data : {};
+  const storeEntityIds = result?.data?.success === 1 ? result?.data?.data : {};
 
   const seoData = {
     title: storeEntityIds?.seo_titles || "Zurah Jewellery",
@@ -232,7 +232,8 @@ App.getInitialProps = async (appContext) => {
     url: origin,
   };
 
-  const appProps = await App.getInitialProps?.(appContext);
+  // ✅ Safely call next/app's getInitialProps to avoid recursion
+  const appProps = await NextApp.getInitialProps(appContext);
 
   return {
     ...appProps,
