@@ -21,7 +21,6 @@ import Link from "next/link";
 import Image from "next/image";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
-import Head from "next/head";
 
 // Ensure jQuery is available in the browser environment
 if (typeof window !== "undefined") {
@@ -466,22 +465,6 @@ const Homes = (props) => {
 
     return (
         <React.Fragment>
-            <Head>
-                    <title>{props.seoData?.title}</title>
-                    <meta name="description" content={props.seoData?.description} />
-                    <meta name="keywords" content={props.seoData?.keywords} />
-            
-                    <meta property="og:title" content={props.seoData?.title} />
-                    <meta property="og:description" content={props.seoData?.description} />
-                    {/* <meta property="og:image" content={props.seoData?.image} /> */}
-                    <meta property="og:url" content={props.seoData?.url} />
-                    <meta property="og:type" content="website" />
-            
-                    <meta name="twitter:card" content="summary_large_image" />
-                    <meta name="twitter:title" content={props.seoData?.title} />
-                    <meta name="twitter:description" content={props.seoData?.description} />
-                    {/* <meta name="twitter:image" content={props.seoData?.image} /> */}
-                  </Head>
             {/* <Seo title={metaConfig?.title} description={metaConfig?.description} keywords={metaConfig?.keywords} url={metaConfig?.url} image={metaConfig?.image} type="website" /> */}
             {loader && <Loader />}
             <section id={styles.BodyContent}>
