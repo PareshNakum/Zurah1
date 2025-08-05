@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const origin = "https://zurah1.vercel.app/";
   const commanService = new Commanservice(origin);
 
