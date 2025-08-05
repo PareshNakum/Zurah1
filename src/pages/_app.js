@@ -167,16 +167,16 @@ function InnerApp({ Component, pageProps }) {
   );
 }
 
-function CustomApp({ Component, pageProps, seoData }) {
+function CustomApp({ Component, pageProps, storeEntityIds }) {
   const { store } = wrapper.useWrappedStore({ pageProps });
 
   return (
     <Provider store={store}>
       <Seo
-        title={seoData.title}
-        keywords={seoData.keywords}
-        description={seoData.description}
-        url={seoData.url}
+        title={storeEntityIds.title}
+        keywords={storeEntityIds.keywords}
+        description={storeEntityIds.description}
+        url={storeEntityIds.url}
       />
       <InnerApp Component={Component} pageProps={pageProps} />
     </Provider>
@@ -210,7 +210,7 @@ CustomApp.getInitialProps = async (appContext) => {
     keywords: storeEntityIds.seo_keyword || "Zurah, Jewellery",
     url: origin,
   };
-
+  console.log(seoData)
   const appProps = await App.getInitialProps(appContext); // ✅ Safe base call
 
   return {
