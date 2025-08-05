@@ -62,6 +62,7 @@ import clsx from "clsx"
 import commanService from "../../../CommanService/commanService"
 import SignIn from "@/components/Login/signIn"
 import Notification from "@/CommanUIComp/Notification/Notification"
+import { FormSelect } from "react-bootstrap"
 
 const Header = ({ storeData }) => {
   const storeEntityIds = useSelector((state) => state.storeEntityId)
@@ -846,7 +847,7 @@ const Header = ({ storeData }) => {
               <div className={`${styles["top-bar-col"]}`}>
                 <div className={`d-flex justify-content-end gap-2`}>
                   {storeEntityIds && storeCurrencyDatas.length > 0 && (
-                    <Form.Select
+                    <FormSelect
                       className={clsx(`${styles["lang-country"]} ${styles["form-select"]}`)}
                       value={storeCurrency}
                       id={`${styles.cars}`}
@@ -858,7 +859,7 @@ const Header = ({ storeData }) => {
                           {isEmpty(e.mp_store_price)}
                         </option>
                       ))}
-                    </Form.Select>
+                    </FormSelect>
                   )}
                 </div>
               </div>
