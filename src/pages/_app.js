@@ -26,6 +26,7 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "react-inner-image-zoom/lib/styles.min.css";
+import Seo from "@/components/SEO/seo";
 
 // Dynamic imports for better performance
 const Header = dynamic(
@@ -36,6 +37,7 @@ const Header = dynamic(
 );
 
 function InnerApp({ Component, pageProps }) {
+  const { seoData = {} } = pageProps;
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -309,6 +311,7 @@ function InnerApp({ Component, pageProps }) {
         src="https://cdn.tangiblee.com/integration/3.1/managed/www.tangiblee-integration.com/revision_1/variation_original/tangiblee-bundle.min.js"
       />
 
+        <Seo {...seoData} />
       <Suspense fallback={<Loader />}>
         <Header storeData={storeEntityIds} />
         <Component {...pageProps} />
