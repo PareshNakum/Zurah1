@@ -12,7 +12,7 @@ function getEnv(origin) {
       imageUrl: "http://192.168.84.21:8080",
       baseUrl1: "http://192.168.84.21:8080/api/call",
       baseUrl2: "http://192.168.84.45/sit-ci-api/call",
-      domain: "https://uat.zurahjewellery.com",
+      domain: "https://zurah1.vercel.app/",
     };
   } else if (source?.includes("staging")) {
     env = {
