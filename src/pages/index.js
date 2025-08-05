@@ -4,22 +4,27 @@ import Seo from "@/components/SEO/seo";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
-import { Commanservice } from "@/CommanService/commanService";
 import axios from "axios";
 
 export async function getServerSideProps(context) {
+  const { req } = context;
 
- try {
+  // Get full domain (including subdomain)
+  const host = req.headers.host;
+  const protocol = req.headers['x-forwarded-proto'] || 'https'; 
+  const fullDomain = `${protocol}://${host}`;
+
+  try {
     const res = await axios.post(
       "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
       {
         a: "GetStoreData",
-        store_domain: "https://zurah1.vercel.app/",
+        store_domain: fullDomain,
         SITDeveloper: "1",
       },
       {
         headers: {
-          origin: "https://zurah1.vercel.app/",
+          origin: fullDomain,
         },
       }
     );
@@ -32,31 +37,31 @@ export async function getServerSideProps(context) {
           title: data?.seo_titles || "Zurah Jewellery",
           description: data?.seo_description || "Default Description",
           keywords: data?.seo_keywords || "Zurah, Jewellery",
-          url: "https://zurah1.vercel.app/",
+          url: fullDomain,
         },
-        entityData: data
-      }
+        entityData: data,
+      },
     };
   } catch (error) {
     console.error("❌ SEO fetch failed:", error.message);
+
     return {
       props: {
         seoData: {
           title: "Zurah Jewellery",
           description: "Default Description",
           keywords: "Zurah, Jewellery",
-          url: "https://zurah1.vercel.app/",
+          url: fullDomain,
         },
         entityData: {},
-      }
+      },
     };
   }
 }
 
-
 export default function Home({ seoData, entityData }) {
   const dispatch = useDispatch();
-console.log(seoData)
+
   useEffect(() => {
     if (entityData && Object.keys(entityData).length > 0) {
       // dispatch(storeEntityId(entityData));
