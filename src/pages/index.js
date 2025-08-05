@@ -55,7 +55,7 @@ export async function getServerSideProps(context) {
 export default function HomePage({ seoData, entityData }) {
   return (
     <>
-      <Seo {...seoData} />
+      <Seo {...pageProps.seoData} />
       <Homes entityData={entityData} />
     </>
   );
