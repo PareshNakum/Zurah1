@@ -4,9 +4,9 @@ import { storeEntityId } from "@/Redux/action";
 import Head from "next/head";
 
 export async function getServerSideProps() {
-  const origin = "https://zurah1.vercel.app/";
+  const origin = "https://uat.zurahjewellery.com";
 
-  const response = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
+  const response = await fetch("http://192.168.84.45/sit-ci-api/call/EmbeddedPageMaster", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -21,7 +21,7 @@ export async function getServerSideProps() {
   });
 
   const result = await response.json();
-  const storeEntityIds = result?.data?.success === 1 ? result?.data?.data : {};
+  const storeEntityIds = result?.success === 1 ? result?.data : {};
 
   return {
     props: {

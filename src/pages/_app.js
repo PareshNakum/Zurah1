@@ -31,7 +31,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import "react-inner-image-zoom/lib/styles.min.css";
 import NextApp from 'next/app';
 // Constants
-const STORE_DOMAIN = "https://zurah1.vercel.app/";
+const STORE_DOMAIN = "https://uat.zurahjewellery.com";
 const MAX_RETRY_ATTEMPTS = 3;
 
 // Dynamic imports
@@ -74,12 +74,12 @@ function InnerApp({ Component, pageProps }) {
         };
 
         const response = await fetch(
-          "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
+          "http://192.168.84.45/sit-ci-api/call/EmbeddedPageMaster",
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              STORE_DOMAIN,
+              origin: STORE_DOMAIN,
               prefer: STORE_DOMAIN,
             },
             body: JSON.stringify(payload),
@@ -87,9 +87,9 @@ function InnerApp({ Component, pageProps }) {
         );
 
         const result = await response.json();
-        const data = result?.data?.data;
-
-        if (result?.data?.success === 1 && data?.tenant_id) {
+        console.log(result,'daat')
+        if (result?.success === 1) {
+          const data = result?.data;
           safeDispatch(storeEntityId(data));
           safeDispatch(storeCurrency(data?.store_currency || "USD"));
           sessionStorage.setItem("storeData", JSON.stringify(data));
@@ -208,7 +208,7 @@ function App({ Component, pageProps, seoData }) {
  App.getInitialProps = async (appContext) => {
   const origin = STORE_DOMAIN;
 
-  const res = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
+  const res = await fetch("http://192.168.84.45/sit-ci-api/call/EmbeddedPageMaster", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -223,7 +223,7 @@ function App({ Component, pageProps, seoData }) {
   });
 
   const result = await res.json();
-  const storeEntityIds = result?.data?.success === 1 ? result?.data?.data : {};
+  const storeEntityIds = result?.success === 1 ? result?.data : {};
 
   const seoData = {
     title: storeEntityIds?.seo_titles || "Zurah Jewellery",
