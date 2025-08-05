@@ -1,82 +1,56 @@
+// app/page.js
 import Homes from "@/components/HomePage/Home/homes";
-import Seo from "@/components/SEO/seo";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { storeEntityId } from "@/Redux/action";
-import axios from "axios";
 
-export async function getServerSideProps(context) {
-  const origin =
-    context.req.headers.origin ||
-    (context.req.headers.host
-      ? `https://${context.req.headers.host}`
-      : "https://zurah1.vercel.app/");
-
+// Fetch store data
+async function fetchStoreData(origin) {
   try {
-    const res = await axios.post(
-      "https://apiuat-ecom-store.upqor.com/api/EmbeddedPageMaster",
-      {
+    const res = await fetch("https://apiuat-ecom-store.upqor.com/api/EmbeddedPageMaster", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        origin,
+        prefer: origin,
+      },
+      body: JSON.stringify({
         a: "GetStoreData",
-        store_domain: "https://zurah1.vercel.app/",
+        store_domain: origin,
         SITDeveloper: "1",
-      },
-      {
-        headers: {
-          origin: "https://zurah1.vercel.app/",
-          prefer: "https://zurah1.vercel.app/ ",
-        },
-      }
-    );
+      }),
+      cache: "no-store", // prevent static caching for fresh SEO
+    });
 
-    const data = res?.data?.data || {};
-
-    // Log to debug SEO payload
-    console.log("✅ SEO Data from API:", data);
-
-    return {
-      props: {
-        seoData: {
-          title: data?.seo_titles || "Zurah Jewellery",
-          description: data?.seo_description || "Elegant jewellery for all occasions",
-          keywords: data?.seo_keywords || "Zurah, Jewellery, Diamonds",
-          image: data?.preview_image || "https://zurah1.vercel.app/default-og.jpg",
-          url: origin,
-        },
-        entityData: data,
-      },
-    };
+    const result = await res.json();
+    return result?.data || {};
   } catch (err) {
-    console.error("❌ API error:", err.message || err);
-
-    return {
-      props: {
-        seoData: {
-          title: "Zurah Jewellery",
-          description: "Elegant jewellery for all occasions",
-          keywords: "Zurah, Jewellery, Diamonds",
-          image: "https://zurah1.vercel.app/default-og.jpg",
-          url: origin,
-        },
-        entityData: {},
-      },
-    };
+    console.error("❌ Metadata fetch error:", err);
+    return {};
   }
 }
 
-export default function Home({ seoData, entityData }) {
-  const dispatch = useDispatch();
+// 🔍 Metadata API
+export async function generateMetadata(_, parent) {
+  const origin = "https://zurah1.vercel.app/"; // You could also pass this via config/env
+  const data = await fetchStoreData(origin);
 
-  useEffect(() => {
-    if (entityData && Object.keys(entityData).length > 0) {
-      dispatch(storeEntityId(entityData));
-      sessionStorage.setItem("storeData", JSON.stringify(entityData));
-    }
-  }, [dispatch, entityData]);
+  const previousImages = (await parent)?.openGraph?.images || [];
 
-  return (
-    <>
-      <Seo {...seoData} />
-      <Homes entityData={entityData} />
-    </>
-  );
+  return {
+    title: data?.seo_titles || "Zurah Jewellery",
+    description: data?.seo_description || "Elegant jewellery for all occasions",
+    keywords: data?.seo_keywords || "Zurah, Jewellery",
+    openGraph: {
+      title: data?.seo_titles || "Zurah Jewellery",
+      description: data?.seo_description || "Elegant jewellery for all occasions",
+      url: origin,
+      images: [data?.preview_image || "https://zurah1.vercel.app/default-og.jpg", ...previousImages],
+    },
+  };
+}
+
+// 🏠 Page Component
+export default async function Page() {
+  const origin = "https://zurah1.vercel.app/";
+  const entityData = await fetchStoreData(origin);
+
+  return <Homes entityData={entityData} />;
 }
