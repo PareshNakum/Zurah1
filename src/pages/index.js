@@ -4,27 +4,28 @@ import Seo from "@/components/SEO/seo";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
-import axios from "axios";
+import { Commanservice } from "@/CommanService/commanService";
 
 export async function getServerSideProps(context) {
-  const { req } = context;
+  const origin =
+    context.req.headers.origin ||
+    (context.req.headers.host
+      ? `https://${context.req.headers.host}`
+      : "https://uat.zurahjewellery.com");
 
-  // Get full domain (including subdomain)
-  const host = req.headers.host;
-  const protocol = req.headers['x-forwarded-proto'] || 'https'; 
-  const fullDomain = `${protocol}://${host}`;
-
+  const commanService = new Commanservice(origin);
+console.log(commanService)
   try {
-    const res = await axios.post(
-      "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
+    const res = await commanService.postApi(
+      "/EmbeddedPageMaster",
       {
         a: "GetStoreData",
-        store_domain: fullDomain,
+        store_domain: commanService.domain,
         SITDeveloper: "1",
       },
       {
         headers: {
-          origin: fullDomain,
+          origin: commanService.domain,
         },
       }
     );
@@ -37,27 +38,28 @@ export async function getServerSideProps(context) {
           title: data?.seo_titles || "Zurah Jewellery",
           description: data?.seo_description || "Default Description",
           keywords: data?.seo_keywords || "Zurah, Jewellery",
-          url: fullDomain,
+          image: data?.preview_image || "",
+          url: commanService.domain,
         },
         entityData: data,
       },
     };
-  } catch (error) {
-    console.error("❌ SEO fetch failed:", error.message);
-
+  } catch (err) {
+    console.error("❌ Server-side fetch error:", err);
     return {
       props: {
         seoData: {
           title: "Zurah Jewellery",
           description: "Default Description",
           keywords: "Zurah, Jewellery",
-          url: fullDomain,
+          url: commanService.domain,
         },
         entityData: {},
       },
     };
   }
 }
+
 
 export default function Home({ seoData, entityData }) {
   const dispatch = useDispatch();
