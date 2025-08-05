@@ -6,10 +6,10 @@ const Seo = ({ title, description, keywords, image, url, type = "website", noInd
 
   return (
     <Head>
-      <title>Jewellery Vercel</title>
+      <title>{title}</title>
 
-      <meta name="description" content="description Jewellery Vercel" />
-      <meta name="keywords" content="Jewellery Vercel keywords" />
+      <meta name="description" content={description} />
+      <meta name="keywords" content={keywords} />
       <meta name="robots" content={noIndex ? "noindex,nofollow" : "index,follow"} />
 
       <meta property="og:title" content={title} />

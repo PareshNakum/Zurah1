@@ -1,86 +1,61 @@
 // pages/index.js
 import Homes from "@/components/HomePage/Home/homes";
 import Seo from "@/components/SEO/seo";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
 
 export async function getServerSideProps(context) {
-  const origin =
-    context.req.headers.origin ||
-    (context.req.headers.host
-      ? `https://${context.req.headers.host}`
-      : "https://zurah1.vercel.app/");
+  const { req } = context;
+  const host = req.headers.host;
+  const protocol = req.headers['x-forwarded-proto'] || 'https';
+  const fullUrl = `${protocol}://${host}`;
 
-  const commanService = new Commanservice(origin);
-console.log(commanService)
+  const subdomain = host.split(".")[0];
+  let domain = fullUrl;
+
+  // Setup your API URL
+  const apiUrl = "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster";
+
+  let seoData = {};
+  let entityData = null;
+
   try {
-    const res = await commanService.postApi(
-      "/EmbeddedPageMaster",
-      {
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         a: "GetStoreData",
-        store_domain: commanService.domain,
-        SITDeveloper: "1",
-      },
-      {
-        headers: {
-          origin: commanService.domain,
-        },
-      }
-    );
+        store_domain: domain,
+      }),
+    });
 
-    const data = res?.data?.data || {};
+    const json = await res.json();
+    const data = json?.data || {};
 
-    return {
-      props: {
-        seoData: {
-          title: data?.seo_titles || "Zurah Jewellery",
-          description: data?.seo_description || "Default Description",
-          keywords: data?.seo_keywords || "Zurah, Jewellery",
-          image: data?.preview_image || "",
-          url: commanService.domain,
-        },
-        entityData: data,
-      },
+    entityData = data;
+
+    seoData = {
+      title: data?.seo_titles || "Zurah Jewellery",
+      description: data?.seo_description || "Elegant fine jewellery for all occasions.",
+      keywords: data?.seo_keywords || "Zurah, Jewellery, Diamonds",
+      image: data?.preview_image || "https://zurah1.vercel.app/default-og.jpg",
+      url: domain,
     };
-  } catch (err) {
-    console.error("❌ Server-side fetch error:", err);
-    return {
-      props: {
-        seoData: {
-          title: "Zurah Jewellery",
-          description: "Default Description",
-          keywords: "Zurah, Jewellery",
-          url: commanService.domain,
-        },
-        entityData: {},
-      },
-    };
+  } catch (error) {
+    console.error("SEO fetch error:", error);
   }
+
+  return {
+    props: {
+      seoData,
+      entityData,
+    },
+  };
 }
 
-
-export default function Home({ seoData, entityData }) {
-  console.log(seoData, entityData)
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (entityData && Object.keys(entityData).length > 0) {
-      // dispatch(storeEntityId(entityData));
-      sessionStorage.setItem("storeData", JSON.stringify(entityData));
-    }
-  }, [dispatch, entityData]);
-
+export default function HomePage({ seoData, entityData }) {
   return (
     <>
-      <Seo
-        title={seoData?.title}
-        description={seoData?.description}
-        keywords={seoData?.keywords}
-        image={seoData?.image}
-        url={seoData?.url}
-      />
+      <Seo {...seoData} />
       <Homes entityData={entityData} />
     </>
   );
