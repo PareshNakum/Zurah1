@@ -21,6 +21,7 @@ import Link from "next/link";
 import Image from "next/image";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 
 // Ensure jQuery is available in the browser environment
 if (typeof window !== "undefined") {
