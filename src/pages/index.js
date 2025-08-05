@@ -1,10 +1,8 @@
-// pages/index.js
 import Homes from "@/components/HomePage/Home/homes";
 import Seo from "@/components/SEO/seo";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
-import { Commanservice } from "@/CommanService/commanService";
 import axios from "axios";
 
 export async function getServerSideProps(context) {
@@ -13,8 +11,6 @@ export async function getServerSideProps(context) {
     (context.req.headers.host
       ? `https://${context.req.headers.host}`
       : "https://zurah1.vercel.app/");
-
-  const commanService = new Commanservice(origin);
 
   try {
     const res = await axios.post(
@@ -27,34 +23,39 @@ export async function getServerSideProps(context) {
       {
         headers: {
           origin: "https://zurah1.vercel.app/",
-          prefer: "https://zurah1.vercel.app/",
+          prefer: "https://zurah1.vercel.app/ ",
         },
       }
     );
 
     const data = res?.data?.data || {};
 
+    // Log to debug SEO payload
+    console.log("✅ SEO Data from API:", data);
+
     return {
       props: {
         seoData: {
           title: data?.seo_titles || "Zurah Jewellery",
-          description: data?.seo_description || "Default Description",
-          keywords: data?.seo_keywords || "Zurah, Jewellery",
-          image: data?.preview_image || "",
-          url: commanService.domain,
+          description: data?.seo_description || "Elegant jewellery for all occasions",
+          keywords: data?.seo_keywords || "Zurah, Jewellery, Diamonds",
+          image: data?.preview_image || "https://zurah1.vercel.app/default-og.jpg",
+          url: origin,
         },
         entityData: data,
       },
     };
   } catch (err) {
-    console.error("❌ Server-side fetch error:", err);
+    console.error("❌ API error:", err.message || err);
+
     return {
       props: {
         seoData: {
           title: "Zurah Jewellery",
-          description: "Default Description",
-          keywords: "Zurah, Jewellery",
-          url: commanService.domain,
+          description: "Elegant jewellery for all occasions",
+          keywords: "Zurah, Jewellery, Diamonds",
+          image: "https://zurah1.vercel.app/default-og.jpg",
+          url: origin,
         },
         entityData: {},
       },
@@ -62,26 +63,19 @@ export async function getServerSideProps(context) {
   }
 }
 
-
 export default function Home({ seoData, entityData }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (entityData && Object.keys(entityData).length > 0) {
-      // dispatch(storeEntityId(entityData));
+      dispatch(storeEntityId(entityData));
       sessionStorage.setItem("storeData", JSON.stringify(entityData));
     }
   }, [dispatch, entityData]);
 
   return (
     <>
-      <Seo
-        title={seoData?.title}
-        description={seoData?.description}
-        keywords={seoData?.keywords}
-        image={seoData?.image}
-        url={seoData?.url}
-      />
+      <Seo {...seoData} />
       <Homes entityData={entityData} />
     </>
   );
