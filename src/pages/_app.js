@@ -285,9 +285,9 @@ function App({ Component, ...rest }) {
 
   return (
     <Provider store={store}>
-      {/* <Suspense fallback={<Loader />}> */}
+      <Suspense fallback={<Loader />}>
         <InnerApp Component={Component} pageProps={props.pageProps} />
-      {/* </Suspense> */}
+      </Suspense>
     </Provider>
   );
 }
