@@ -80,7 +80,7 @@ function InnerApp({ Component, pageProps }) {
       const result = await response.json();
       const data = result?.data?.data;
       console.log(result)
-      if (result?.data?.success === 1) {
+      if (result?.success === 1) {
         safeDispatch(storeEntityId(data));
         safeDispatch(storeCurrency(data?.store_currency || "USD"));
         sessionStorage.setItem("storeData", JSON.stringify(data));
@@ -202,7 +202,7 @@ CustomApp.getInitialProps = async (appContext) => {
   });
 
   const result = await res.json();
-  const storeEntityIds = result?.data?.success === 1 ? result?.data?.data : {};
+  const storeEntityIds = result?.success === 1 ? result?.data?.data : {};
 
   const seoData = {
     title: storeEntityIds?.seo_titles || "Zurah Jewellery",
