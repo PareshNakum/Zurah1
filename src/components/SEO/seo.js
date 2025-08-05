@@ -3,6 +3,14 @@ import Head from "next/head";
 
 const Seo = ({ title, description, keywords, image, url, type = "website", noIndex = false }) => {
   const canonicalUrl = url || "https://zurah1.vercel.app/";
+ const schema = {
+    "@context": "https://schema.org",
+    "@type": type,
+    name: title,
+    description,
+    url: canonicalUrl,  
+    image: [image],
+  };
 
   return (
     <Head>
@@ -23,6 +31,10 @@ const Seo = ({ title, description, keywords, image, url, type = "website", noInd
       <meta name="twitter:description" content={description} />
       {image && <meta name="twitter:image" content={image} />}
       <link rel="canonical" href={canonicalUrl} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
     </Head>
   );
 };
