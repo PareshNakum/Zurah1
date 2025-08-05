@@ -7,28 +7,15 @@ import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
 
 export async function getServerSideProps(context) {
-  const origin =
-    context.req.headers.origin ||
-    (context.req.headers.host
-      ? `https://${context.req.headers.host}`
-      : "https://zurah1.vercel.app/");
-
+  const origin = context.req.headers.origin || `https://${context.req.headers.host}`;
   const commanService = new Commanservice(origin);
-console.log(commanService)
+
   try {
-    const res = await commanService.postApi(
-      "/EmbeddedPageMaster",
-      {
-        a: "GetStoreData",
-        store_domain: commanService.domain,
-        SITDeveloper: "1",
-      },
-      {
-        headers: {
-          origin: commanService.domain,
-        },
-      }
-    );
+    const res = await commanService.postApi("/EmbeddedPageMaster", {
+      a: "GetStoreData",
+      store_domain: origin,
+      SITDeveloper: "1",
+    });
 
     const data = res?.data?.data || {};
 
@@ -39,20 +26,19 @@ console.log(commanService)
           description: data?.seo_description || "Default Description",
           keywords: data?.seo_keywords || "Zurah, Jewellery",
           image: data?.preview_image || "",
-          url: commanService.domain,
+          url: origin,
         },
         entityData: data,
       },
     };
   } catch (err) {
-    console.error("❌ Server-side fetch error:", err);
     return {
       props: {
         seoData: {
           title: "Zurah Jewellery",
           description: "Default Description",
           keywords: "Zurah, Jewellery",
-          url: commanService.domain,
+          url: origin,
         },
         entityData: {},
       },
@@ -61,13 +47,14 @@ console.log(commanService)
 }
 
 
+
 export default function Home({ seoData, entityData }) {
   console.log(seoData)
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (entityData && Object.keys(entityData).length > 0) {
-      // dispatch(storeEntityId(entityData));
+      dispatch(storeEntityId(entityData));
       sessionStorage.setItem("storeData", JSON.stringify(entityData));
     }
   }, [dispatch, entityData]);
