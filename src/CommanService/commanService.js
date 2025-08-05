@@ -30,9 +30,9 @@ function getEnv(origin) {
     };
   } else {
     env = {
-      imageUrl: "https://api-ecom-store.upqor.com",
-      baseUrl1: "https://api-ecom-store.upqor.com/api/call",
-      baseUrl2: "https://api-ecom.upqor.com/call",
+      imageUrl: "https://apiuat-ecom-store.upqor.com",
+      baseUrl1: "https://apiuat-ecom-store.upqor.com/api/call",
+      baseUrl2: "https://apiuat-ecom.upqor.com/call",
       domain: source,
     };
   }
