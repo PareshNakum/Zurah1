@@ -1,56 +1,93 @@
-// app/page.js
 import Homes from "@/components/HomePage/Home/homes";
+import Seo from "@/components/SEO/seo";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { storeEntityId } from "@/Redux/action";
+import axios from "axios";
 
-// Fetch store data
-async function fetchStoreData(origin) {
-  try {
-    const res = await fetch("https://apiuat-ecom-store.upqor.com/api/EmbeddedPageMaster", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        origin,
-        prefer: origin,
-      },
-      body: JSON.stringify({
+export async function getServerSideProps(context) {
+  const origin =
+    context.req.headers.origin ||
+    (context.req.headers.host
+      ? `https://${context.req.headers.host}`
+      : "https://zurah1.vercel.app/");
+
+  // Return inside .then() by wrapping everything in a Promise
+  return axios
+    .post(
+      "https://apiuat-ecom-store.upqor.com/api/EmbeddedPageMaster",
+      {
         a: "GetStoreData",
         store_domain: origin,
         SITDeveloper: "1",
-      }),
-      cache: "no-store", // prevent static caching for fresh SEO
+      },
+      {
+        headers: {
+          origin,
+          prefer: origin,
+        },
+      }
+    )
+    .then((res) => {
+      const success = res?.data?.success === 1;
+      const data = res?.data?.data || {};
+
+      return {
+        props: {
+          seoData: {
+            title: success ? data?.seo_titles : "Zurah Jewellery",
+            description: success
+              ? data?.seo_description
+              : "Elegant jewellery for all occasions",
+            keywords: success
+              ? data?.seo_keywords
+              : "Zurah, Jewellery, Diamonds",
+            image: success
+              ? data?.preview_image
+              : "https://zurah1.vercel.app/default-og.jpg",
+            url: origin,
+          },
+          entityData: success ? data : {},
+        },
+      };
+    })
+    .catch((err) => {
+      console.error("❌ Server-side fetch error:", err);
+      return {
+        props: {
+          seoData: {
+            title: "Zurah Jewellery",
+            description: "Elegant jewellery for all occasions",
+            keywords: "Zurah, Jewellery, Diamonds",
+            image: "https://zurah1.vercel.app/default-og.jpg",
+            url: origin,
+          },
+          entityData: {},
+        },
+      };
     });
-
-    const result = await res.json();
-    return result?.data || {};
-  } catch (err) {
-    console.error("❌ Metadata fetch error:", err);
-    return {};
-  }
 }
 
-// 🔍 Metadata API
-export async function generateMetadata(_, parent) {
-  const origin = "https://zurah1.vercel.app/"; // You could also pass this via config/env
-  const data = await fetchStoreData(origin);
+export default function Home({ seoData, entityData }) {
+  const dispatch = useDispatch();
 
-  const previousImages = (await parent)?.openGraph?.images || [];
+  useEffect(() => {
+    if (entityData && Object.keys(entityData).length > 0) {
+      dispatch(storeEntityId(entityData));
+      sessionStorage.setItem("storeData", JSON.stringify(entityData));
+    }
+  }, [dispatch, entityData]);
 
-  return {
-    title: data?.seo_titles || "Zurah Jewellery",
-    description: data?.seo_description || "Elegant jewellery for all occasions",
-    keywords: data?.seo_keywords || "Zurah, Jewellery",
-    openGraph: {
-      title: data?.seo_titles || "Zurah Jewellery",
-      description: data?.seo_description || "Elegant jewellery for all occasions",
-      url: origin,
-      images: [data?.preview_image || "https://zurah1.vercel.app/default-og.jpg", ...previousImages],
-    },
-  };
-}
-
-// 🏠 Page Component
-export default async function Page() {
-  const origin = "https://zurah1.vercel.app/";
-  const entityData = await fetchStoreData(origin);
-
-  return <Homes entityData={entityData} />;
+  return (
+    <>
+      <Seo
+        title={seoData?.title}
+        description={seoData?.description}
+        keywords={seoData?.keywords}
+        image={seoData?.image}
+        url={seoData?.url}
+      />
+      <Homes entityData={entityData} />
+    </>
+  );
 }
