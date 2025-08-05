@@ -11,15 +11,15 @@ export async function getServerSideProps(context) {
 
  try {
     const res = await axios.post(
-      "http://192.168.84.45/sit-ci-api/call/EmbeddedPageMaster",
+      "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
       {
         a: "GetStoreData",
-        store_domain: "https://uat.zurahjewellery.com/",
+        store_domain: "https://zurah1.vercel.app/",
         SITDeveloper: "1",
       },
       {
         headers: {
-          origin: "https://uat.zurahjewellery.com/",
+          origin: "https://zurah1.vercel.app/",
         },
       }
     );
@@ -32,7 +32,7 @@ export async function getServerSideProps(context) {
           title: data?.seo_titles || "Zurah Jewellery",
           description: data?.seo_description || "Default Description",
           keywords: data?.seo_keywords || "Zurah, Jewellery",
-          url: "https://uat.zurahjewellery.com/",
+          url: "https://zurah1.vercel.app/",
         },
         entityData: data
       }
@@ -45,7 +45,7 @@ export async function getServerSideProps(context) {
           title: "Zurah Jewellery",
           description: "Default Description",
           keywords: "Zurah, Jewellery",
-          url: "https://uat.zurahjewellery.com/",
+          url: "https://zurah1.vercel.app/",
         },
         entityData: {},
       }
