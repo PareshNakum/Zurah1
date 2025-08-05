@@ -1,6 +1,9 @@
 // pages/index.js
 import Homes from "@/components/HomePage/Home/homes";
 import Seo from "@/components/SEO/seo";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
 
 export async function generateMetadata({ params, searchParams }) {
@@ -13,10 +16,12 @@ export async function generateMetadata({ params, searchParams }) {
     body: JSON.stringify({
       a: "GetStoreData",
       store_domain: host,
+      SITDeveloper: "1",
     }),
   });
 
   const json = await res.json();
+  console.log(json)
   const data = json?.data || {};
 
   return {
@@ -34,10 +39,27 @@ export async function generateMetadata({ params, searchParams }) {
   };
 }
 
-export default function HomePage({ seoData, entityData }) {
+
+export default function Home({ seoData, entityData }) {
+  
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (entityData && Object.keys(entityData).length > 0) {
+      // dispatch(storeEntityId(entityData));
+      sessionStorage.setItem("storeData", JSON.stringify(entityData));
+    }
+  }, [dispatch, entityData]);
+
   return (
     <>
-      <Seo {...pageProps.seoData} />
+      <Seo
+        title={seoData?.title}
+        description={seoData?.description}
+        keywords={seoData?.keywords}
+        image={seoData?.image}
+        url={seoData?.url}
+      />
       <Homes entityData={entityData} />
     </>
   );
