@@ -62,8 +62,8 @@ export default function HomePage({ seoData, entityData }) {
   console.log(seoData)
   return (
     <>
-      <Seo {...seoData} />
-      <Homes entityData={entityData} />
+      {/* <Seo {...seoData} /> */}
+      <Homes entityData={entityData} seoData={seoData}/>
     </>
   );
 }

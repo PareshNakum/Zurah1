@@ -464,7 +464,7 @@ const Homes = (props) => {
 
     return (
         <React.Fragment>
-            {/* <Seo title={metaConfig?.title} description={metaConfig?.description} keywords={metaConfig?.keywords} url={metaConfig?.url} image={metaConfig?.image} type="website" /> */}
+            <Seo {...props.seoData} />
             {loader && <Loader />}
             <section id={styles.BodyContent}>
                 <div className={clsx(`homepage_slider section_margin mt-0`)}>
