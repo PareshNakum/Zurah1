@@ -1,3 +1,4 @@
+// pages/index.js
 import Homes from "@/components/HomePage/Home/homes";
 import Seo from "@/components/SEO/seo";
 import { useEffect } from "react";
@@ -5,21 +6,26 @@ import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
 
-export async function getServerSideProps() {
-  const origin = "https://zurah1.vercel.app/";
-  const commanService = new Commanservice(origin);
+export async function getServerSideProps(context) {
+  const origin =
+    context.req.headers.origin ||
+    (context.req.headers.host
+      ? `https://${context.req.headers.host}`
+      : "https://uat.zurahjewellery.com");
 
+  const commanService = new Commanservice(origin);
+console.log(commanService)
   try {
     const res = await commanService.postApi(
       "/EmbeddedPageMaster",
       {
         a: "GetStoreData",
-        store_domain: origin,
+        store_domain: commanService.domain,
         SITDeveloper: "1",
       },
       {
         headers: {
-          origin,
+          origin: commanService.domain,
         },
       }
     );
@@ -33,21 +39,20 @@ export async function getServerSideProps() {
           description: data?.seo_description || "Default Description",
           keywords: data?.seo_keywords || "Zurah, Jewellery",
           image: data?.preview_image || "",
-          url: `${origin}/`, // ✅ Canonical full URL
+          url: commanService.domain,
         },
         entityData: data,
       },
-      revalidate: 60, // Optional: ISR (regenerate every 60s)
     };
   } catch (err) {
-    console.error("❌ Static fetch error:", err);
+    console.error("❌ Server-side fetch error:", err);
     return {
       props: {
         seoData: {
           title: "Zurah Jewellery",
           description: "Default Description",
           keywords: "Zurah, Jewellery",
-          url: `${origin}/`,
+          url: commanService.domain,
         },
         entityData: {},
       },
@@ -55,11 +60,14 @@ export async function getServerSideProps() {
   }
 }
 
+
 export default function Home({ seoData, entityData }) {
+  console.log(seoData)
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (entityData && Object.keys(entityData).length > 0) {
+      // dispatch(storeEntityId(entityData));
       sessionStorage.setItem("storeData", JSON.stringify(entityData));
     }
   }, [dispatch, entityData]);

@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import styles from "./header.module.scss"
 import Form from "react-bootstrap/Form"
@@ -559,8 +557,8 @@ const Header = ({ storeData }) => {
     window.addEventListener("scroll", handleScroll)
     return () => {
       window.removeEventListener("scroll", handleScroll)
-    }
-  }, [dispatch, onceUpdatedLogo, storeEntityIds, ResetPasswordURL, headerSectionData])
+    } 
+  }, [onceUpdatedLogo, storeEntityIds, ResetPasswordURL, headerSectionData])
   // useEffect(() => {
   //   if (!pathname?.includes("start-with-a-diamond")) {
   //     dispatch(editDiamondAction(""))
@@ -917,7 +915,7 @@ const Header = ({ storeData }) => {
 
                 {!navbarToggle ? (
                   <button
-                    className={clsx(`navbar-toggler`)}
+                    className={clsx(styles["navbar-toggler"], "navbar-toggler")}
                     type="button"
                     onClick={() => setNavbarToggle(true)}
                     aria-label="Toggle navigation"
@@ -928,7 +926,7 @@ const Header = ({ storeData }) => {
                   </button>
                 ) : (
                   <button
-                    className={clsx(`navbar-toggler ${styles.active}`)}
+                    className={clsx(`${styles["navbar-toggler"]} ${styles.active}, "navbar-toggler"`)}
                     type="button"
                     onClick={() => setNavbarToggle(false)}
                     aria-label="Toggle navigation"
@@ -948,7 +946,7 @@ const Header = ({ storeData }) => {
                 >
                   <ul
                     className={clsx(
-                      `${styles["navbar-nav"]} d-lg-flex justify-content-lg-between ${styles["main-menu"]}`
+                      `${styles["navbar-nav"]} d-lg-flex justify-content-lg-between p-0 ${styles["main-menu"]}`
                     )}
                   >
                     {navMenuSecond.length > 0 &&
@@ -994,9 +992,7 @@ const Header = ({ storeData }) => {
                                     >
                                       {e?.menu_name}{" "}
                                       <span
-                                        className={`${styles["minus-plus"]} ${
-                                          className === e?.unique_id ? `${styles["ic_minus"]}` : `${styles["ic_plus"]}`
-                                        }`}
+                                        className={`minus-plus ${className === e?.unique_id ? "ic_minus" : "ic_plus"}`}
                                       ></span>
                                     </Link>
                                   </div>
