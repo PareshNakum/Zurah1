@@ -91,7 +91,7 @@ const Homes = (props) => {
         };
         Commanservice.postLaravelApi('/MostSearchProduct', obj,{
         headers: {
-          origin: "https://uat.zurahjewellery.com",
+          origin: "https://zurah1.vercel.app/",
         },
       }).then((res) => {
             if (res.data.success === 1) {
@@ -155,7 +155,7 @@ const Homes = (props) => {
         // }
         Commanservice.postApi('/EmbeddedPageMaster', objProduct,{
         headers: {
-          origin: "https://uat.zurahjewellery.com",
+          origin: "https://zurah1.vercel.app/",
         },
       }).then((res1) => {
             if (res1.data.success === 1) {
@@ -199,7 +199,7 @@ const Homes = (props) => {
         };
         Commanservice.postLaravelApi('/SectionDetail', obj,{
         headers: {
-          origin: "https://uat.zurahjewellery.com",
+          origin: "https://zurah1.vercel.app/",
         },
       }).then((res) => {
             if (res.data.success === 1) {
