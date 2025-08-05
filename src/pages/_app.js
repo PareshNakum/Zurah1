@@ -268,7 +268,7 @@ function InnerApp({ Component, pageProps }) {
         title={pageProps.seoData.title}
         keywords={pageProps.seoData.keywords}
         description={pageProps.seoData.description}
-        image={pageProps.seoData.image}
+        // image={pageProps.seoData.image}
         url={pageProps.seoData.url}
       />
       <Suspense fallback={<Loader />}>
