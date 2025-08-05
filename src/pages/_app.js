@@ -198,6 +198,7 @@ function App({ Component, pageProps, seoData }) {
         keywords={seoData.keywords}
         description={seoData.description}
         url={seoData.url}
+        image={seoData.image}
       />
       <InnerApp Component={Component} pageProps={pageProps} />
     </Provider>
@@ -230,6 +231,7 @@ function App({ Component, pageProps, seoData }) {
     description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
     keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
     url: origin,
+    image:storeEntityIds?.preview_image || ""
   };
 
   // ✅ Safely call next/app's getInitialProps to avoid recursion

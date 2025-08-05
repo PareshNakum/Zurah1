@@ -30,7 +30,7 @@ export async function getServerSideProps() {
         title: storeEntityIds?.seo_titles || "Zurah Jewellery",
         description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
         keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
-        // image: storeEntityIds?.preview_image,
+        image: storeEntityIds?.preview_image,
         url: origin,
       },
     },
@@ -47,14 +47,14 @@ export default function Page({ storeEntityIds, seoData }) {
 
         <meta property="og:title" content={seoData?.title} />
         <meta property="og:description" content={seoData?.description} />
-        {/* <meta property="og:image" content={seoData?.image} /> */}
+        <meta property="og:image" content={seoData?.image} />
         <meta property="og:url" content={seoData?.url} />
         <meta property="og:type" content="website" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={seoData?.title} />
         <meta name="twitter:description" content={seoData?.description} />
-        {/* <meta name="twitter:image" content={seoData?.image} /> */}
+        <meta name="twitter:image" content={seoData?.image} />
       </Head>
 
       <Homes entityData={storeEntityIds} seoData={seoData}/>
