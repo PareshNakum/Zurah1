@@ -62,6 +62,7 @@ console.log(commanService)
 
 
 export default function Home({ seoData, entityData }) {
+  console.log(seoData, entityData)
   const dispatch = useDispatch();
 
   useEffect(() => {
