@@ -80,10 +80,10 @@ const Homes = (props) => {
     const mostSearchableData = useCallback((sectionDataList, mainData, index) => {
         const obj = {
             a: "GetMostSearchProduct",
-            store_id: storeEntityIds.mini_program_id,
-            tenant_id: storeEntityIds.tenant_id,
-            entity_id: storeEntityIds.entity_id,
-            origin: storeEntityIds.cmp_origin,
+            store_id: props.entityData.mini_program_id,
+            tenant_id: props.entityData.tenant_id,
+            entity_id: props.entityData.entity_id,
+            origin: props.entityData.cmp_origin,
             consumer_id: "",
             search_type: "",
             number: "0",
@@ -91,7 +91,7 @@ const Homes = (props) => {
         };
         Commanservice.postLaravelApi('/MostSearchProduct', obj,{
         headers: {
-          origin: "https://zurah1.vercel.app/",
+          origin: "https://uat.zurahjewellery.com",
         },
       }).then((res) => {
             if (res.data.success === 1) {
@@ -117,16 +117,16 @@ const Homes = (props) => {
                 setSectionDataList([...mainData]);
             }
         })
-    }, [loginData, storeEntityIds])
+    }, [loginData, props.entityData])
 
     //Function for products data by filter
     const productData = useCallback((sectionDataList, type, mainData, index) => {
         const objProduct = {
             a: "getStoreItems",
             SITDeveloper: "1",
-            miniprogram_id: storeEntityIds.mini_program_id,
-            tenant_id: (storeEntityIds.tenant_id),
-            entity_id: (storeEntityIds.entity_id),
+            miniprogram_id: props.entityData.mini_program_id,
+            tenant_id: (props.entityData.tenant_id),
+            entity_id: (props.entityData.entity_id),
             per_page: "15",
             number: "1",
             filters: "[]",
@@ -134,7 +134,7 @@ const Homes = (props) => {
             from_price: "",
             to_price: "",
             extra_currency: storeCurrency,
-            secret_key: storeEntityIds.secret_key,
+            secret_key: props.entityData.secret_key,
             product_diy: "PRODUCT",
             store_type: "B2C",
             vertical_code: sectionDataList?.vertical_code,
@@ -155,7 +155,7 @@ const Homes = (props) => {
         // }
         Commanservice.postApi('/EmbeddedPageMaster', objProduct,{
         headers: {
-          origin: "https://zurah1.vercel.app/",
+          origin: "https://uat.zurahjewellery.com",
         },
       }).then((res1) => {
             if (res1.data.success === 1) {
@@ -186,7 +186,7 @@ const Homes = (props) => {
                 setToastMsg(res1.data.message);
             }
         }).catch(() => { });
-    }, [loginData, storeEntityIds]);
+    }, [loginData, props.entityData]);
 
     //Function for Slider and collection section data by API calling
     const collectionData = useCallback((value) => {
@@ -194,12 +194,12 @@ const Homes = (props) => {
         setSkeletonLoader(true);
         var obj = {
             a: "getHomeSectionDetail",
-            store_id: storeEntityIds.mini_program_id,
+            store_id: props.entityData.mini_program_id,
             type: "B2C"
         };
         Commanservice.postLaravelApi('/SectionDetail', obj,{
         headers: {
-          origin: "https://zurah1.vercel.app/",
+          origin: "https://uat.zurahjewellery.com",
         },
       }).then((res) => {
             if (res.data.success === 1) {
@@ -288,7 +288,7 @@ const Homes = (props) => {
         if (typeof window !== "undefined" && sessionStorage.getItem("storeUrl") !== null) {
             typeof window !== "undefined" && sessionStorage.removeItem("storeUrl")
         }
-        if (Object.keys(storeEntityIds).length > 0) {
+        if (Object.keys(props.entityData).length > 0) {
             if (!onceUpdated) {
                 window.scrollTo(0, 0);
                 setOnceUpdated(true);
@@ -298,7 +298,7 @@ const Homes = (props) => {
         } else {
             setLoader(false);
         }
-    }, [storeEntityIds, onceUpdated, dispatch, collectionData]);
+    }, [props.entityData, onceUpdated, dispatch, collectionData]);
 
 
     // set scroll behaviour for products data and most searchable products data
@@ -433,9 +433,9 @@ const Homes = (props) => {
     const journeyData = () => {
         var obj = {
             a: "GetJourney",
-            store_id: storeEntityIds.mini_program_id,
-            tenant_id: storeEntityIds.tenant_id,
-            entity_id: storeEntityIds.entity_id,
+            store_id: props.entityData.mini_program_id,
+            tenant_id: props.entityData.tenant_id,
+            entity_id: props.entityData.entity_id,
             store_type: 'B2C',
             unique_id: ''
         };
@@ -448,11 +448,11 @@ const Homes = (props) => {
     }
 
     // useEffect(() => {
-    //     if (sectionDataList.length === 0 && storeEntityIds) {
+    //     if (sectionDataList.length === 0 && props.entityData) {
     //         collectionData();
     //         journeyData();
     //     }
-    // }, [sectionDataList,storeEntityIds]);
+    // }, [sectionDataList,props.entityData]);
 
     //Update states when first time rendering
     // useEffect(() => {
@@ -464,7 +464,7 @@ const Homes = (props) => {
 
     return (
         <React.Fragment>
-            <Seo {...props.seoData} />
+            {/* <Seo title={metaConfig?.title} description={metaConfig?.description} keywords={metaConfig?.keywords} url={metaConfig?.url} image={metaConfig?.image} type="website" /> */}
             {loader && <Loader />}
             <section id={styles.BodyContent}>
                 <div className={clsx(`homepage_slider section_margin mt-0`)}>

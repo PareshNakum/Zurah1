@@ -5,23 +5,28 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { storeEntityId } from "@/Redux/action";
 import { Commanservice } from "@/CommanService/commanService";
+import axios from "axios";
 
-export async function getStaticProps() {
-  // Use the deployed domain as origin during build
-  const origin = "https://zurah1.vercel.app"; // <- Use your actual domain here
+export async function getServerSideProps(context) {
+  const origin =
+    context.req.headers.origin ||
+    (context.req.headers.host
+      ? `https://${context.req.headers.host}`
+      : "https://zurah1.vercel.app");
+
   const commanService = new Commanservice(origin);
 
-  try {
-    const res = await commanService.postApi(
-      "/EmbeddedPageMaster",
+ try {
+    const res = await axios.post(
+      "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
       {
         a: "GetStoreData",
-        store_domain: origin,
+        store_domain: "https://zurah1.vercel.app/",
         SITDeveloper: "1",
       },
       {
         headers: {
-          origin,
+          origin: "https://zurah1.vercel.app/",
         },
       }
     );
@@ -32,38 +37,50 @@ export async function getStaticProps() {
       props: {
         seoData: {
           title: data?.seo_titles || "Zurah Jewellery",
-          description: data?.seo_description || "Default description for Zurah",
-          keywords: data?.seo_keywords || "zurah, jewellery",
-          image: data?.preview_image || "",
-          url: origin,
+          description: data?.seo_description || "Default Description",
+          keywords: data?.seo_keywords || "Zurah, Jewellery",
+          url: "https://uat.zurahjewellery.com/",
         },
-        entityData: data,
-      },
-      revalidate: 60 * 60, // Optional: Rebuild every hour (ISR)
+        entityData: data
+      }
     };
-  } catch (err) {
-    console.error("❌ Static props fetch error:", err);
+  } catch (error) {
+    console.error("❌ SEO fetch failed:", error.message);
     return {
       props: {
         seoData: {
           title: "Zurah Jewellery",
-          description: "Fallback description for Zurah",
-          keywords: "zurah, jewellery",
-          url: origin,
+          description: "Default Description",
+          keywords: "Zurah, Jewellery",
+          url: "https://uat.zurahjewellery.com/",
         },
         entityData: {},
-      },
+      }
     };
   }
 }
 
 
-export default function HomePage({ seoData, entityData }) {
-  console.log(seoData)
+export default function Home({ seoData, entityData }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (entityData && Object.keys(entityData).length > 0) {
+      // dispatch(storeEntityId(entityData));
+      sessionStorage.setItem("storeData", JSON.stringify(entityData));
+    }
+  }, [dispatch, entityData]);
+
   return (
     <>
-      {/* <Seo {...seoData} /> */}
-      <Homes entityData={entityData} seoData={seoData}/>
+      <Seo
+        title={seoData?.title}
+        description={seoData?.description}
+        keywords={seoData?.keywords}
+        image={seoData?.image}
+        url={seoData?.url}
+      />
+      <Homes entityData={entityData} />
     </>
   );
 }
