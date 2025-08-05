@@ -243,7 +243,7 @@ function InnerApp({ Component, pageProps }) {
     <>
       <Seo
         title={pageProps.seoData.title}
-        keyword={pageProps.seoData.keyword}
+        keywords={pageProps.seoData.keywords}
         description={pageProps.seoData.description}
         image={pageProps.seoData.image}
         url={pageProps.seoData.url}
