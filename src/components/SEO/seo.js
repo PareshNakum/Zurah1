@@ -7,7 +7,7 @@ export default function Seo({ title, description, keywords, image, url }) {
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-
+<meta property="og:site_name" content="Zurah"></meta>
       {/* Open Graph */}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
