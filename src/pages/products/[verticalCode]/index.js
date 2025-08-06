@@ -41,7 +41,7 @@ export async function getServerSideProps(context) {
 
     // 2️⃣ Get Menu Navigation Data
     const menuRes = await fetch(
-      "https://apiuat-ecom-store.upqor.com/api/call/NavigationMegamenu",
+      "https://apiuat-ecom.upqor.com/api/call/NavigationMegamenu",
       {
         method: "POST",
         headers: {
