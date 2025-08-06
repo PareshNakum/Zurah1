@@ -180,20 +180,7 @@ function InnerApp({ Component, pageProps }) {
         async
         src="https://cdn.tangiblee.com/integration/3.1/managed/www.tangiblee-integration.com/revision_1/variation_original/tangiblee-bundle.min.js"
       />
-
-      <Header storeData={storeEntityIds} />
-      <Component {...pageProps} />
-      <Footer />
-    </>
-  );
-}
-
-function App({ Component, pageProps }) {
-  const { store } = wrapper.useWrappedStore({ pageProps });
-
-  return (
-    <Provider store={store}>
-      <Head>
+<Head>
         <title>{pageProps?.seoData?.title}</title>
         <meta name="description" content={pageProps?.seoData?.description} />
         <meta name="keywords" content={pageProps?.seoData?.keywords} />
@@ -209,6 +196,18 @@ function App({ Component, pageProps }) {
         <meta name="twitter:description" content={pageProps?.seoData?.description} />
         <meta name="twitter:image" content={pageProps?.seoData?.image} />
       </Head>
+      <Header storeData={storeEntityIds} />
+      <Component {...pageProps} />
+      <Footer />
+    </>
+  );
+}
+
+function App({ Component, pageProps }) {
+  const { store } = wrapper.useWrappedStore({ pageProps });
+
+  return (
+    <Provider store={store}>
       <InnerApp Component={Component} pageProps={pageProps} />
     </Provider>
   );
