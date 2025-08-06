@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useState, useCallback, useRef } from "react"
 import styles from "./jewellery.module.scss"
 import { useDispatch, useSelector } from "react-redux"
