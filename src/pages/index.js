@@ -40,7 +40,7 @@ export async function getServerSideProps() {
 export default function Page({ storeEntityIds, seoData }) {
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>{seoData?.title}</title>
         <meta name="description" content={seoData?.description} />
         <meta name="keywords" content={seoData?.keywords} />
@@ -55,7 +55,7 @@ export default function Page({ storeEntityIds, seoData }) {
         <meta name="twitter:title" content={seoData?.title} />
         <meta name="twitter:description" content={seoData?.description} />
         <meta name="twitter:image" content={seoData?.image} />
-      </Head>
+      </Head> */}
 
       <Homes entityData={storeEntityIds} seoData={seoData}/>
     </>

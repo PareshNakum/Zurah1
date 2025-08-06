@@ -17,7 +17,7 @@ import { storeCurrency, storeEntityId } from "@/Redux/action";
 import Loader from "@/CommanUIComp/Loader/Loader";
 import Footer from "@/components/HeaderFooter/Footer/footer";
 import Seo from "@/components/SEO/seo";
-
+import Head from "next/head";
 // CSS Imports
 import "swiper/css";
 import "swiper/css/navigation";
@@ -188,63 +188,72 @@ function InnerApp({ Component, pageProps }) {
   );
 }
 
-function App({ Component, pageProps, seoData }) {
+function App({ Component, pageProps }) {
   const { store } = wrapper.useWrappedStore({ pageProps });
 
   return (
     <Provider store={store}>
-      <Seo
-        title={seoData.title}
-        keywords={seoData.keywords}
-        description={seoData.description}
-        url={seoData.url}
-        image={seoData.image}
-      />
+      <Head>
+        <title>{pageProps?.seoData?.title}</title>
+        <meta name="description" content={pageProps?.seoData?.description} />
+        <meta name="keywords" content={pageProps?.seoData?.keywords} />
+
+        <meta property="og:title" content={pageProps?.seoData?.title} />
+        <meta property="og:description" content={pageProps?.seoData?.description} />
+        <meta property="og:image" content={pageProps?.seoData?.image} />
+        <meta property="og:url" content={pageProps?.seoData?.url} />
+        <meta property="og:type" content="website" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageProps?.seoData?.title} />
+        <meta name="twitter:description" content={pageProps?.seoData?.description} />
+        <meta name="twitter:image" content={pageProps?.seoData?.image} />
+      </Head>
       <InnerApp Component={Component} pageProps={pageProps} />
     </Provider>
   );
 }
 
 // ✅ Fixed name from MyApp to App
- App.getInitialProps = async (appContext) => {
-  const origin = STORE_DOMAIN;
+//  App.getInitialProps = async (appContext) => {
+//   const origin = STORE_DOMAIN;
 
-  const res = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      origin,
-      prefer: origin,
-    },
-    body: JSON.stringify({
-      a: "GetStoreData",
-      store_domain: origin,
-      SITDeveloper: "1",
-    }),
-  });
+//   const res = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       origin,
+//       prefer: origin,
+//     },
+//     body: JSON.stringify({
+//       a: "GetStoreData",
+//       store_domain: origin,
+//       SITDeveloper: "1",
+//     }),
+//   });
 
-  const result = await res.json();
-  const storeEntityIds = result?.success === 1 ? result?.data : {};
+//   const result = await res.json();
+//   const storeEntityIds = result?.success === 1 ? result?.data : {};
 
-  const seoData = {
-    title: storeEntityIds?.seo_titles || "Zurah Jewellery",
-    description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
-    keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
-    url: origin,
-    image:storeEntityIds?.preview_image || ""
-  };
+//   const seoData = {
+//     title: storeEntityIds?.seo_titles || "Zurah Jewellery",
+//     description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
+//     keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
+//     url: origin,
+//     image:storeEntityIds?.preview_image || ""
+//   };
 
-  // ✅ Safely call next/app's getInitialProps to avoid recursion
-  const appProps = await NextApp.getInitialProps(appContext);
+//   // ✅ Safely call next/app's getInitialProps to avoid recursion
+//   const appProps = await NextApp.getInitialProps(appContext);
 
-  return {
-    ...appProps,
-    seoData,
-    pageProps: {
-      ...appProps?.pageProps,
-      storeEntityIds,
-    },
-  };
-};
+//   return {
+//     ...appProps,
+//     seoData,
+//     pageProps: {
+//       ...appProps?.pageProps,
+//       storeEntityIds,
+//     },
+//   };
+// };
 
 export default App;
