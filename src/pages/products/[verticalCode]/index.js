@@ -1,44 +1,64 @@
 // pages/products/[verticalCode].js
 import Jewellery from "@/components/Jewellery/Jewellery/jewellery";
 import Seo from "@/components/SEO/seo";
-import { Commanservice } from "@/CommanService/commanService";
+import { Commanservice, domain } from "@/CommanService/commanService";
+import Head from "next/head";
 
 export async function getServerSideProps(context) {
   const { params, req } = context;
   const verticalCode = params?.verticalCode;
-
-  const origin = req?.headers?.host;
+  // const origin = req?.headers?.host;
+  const origin = "https://zurah1.vercel.app/";
   const api = new Commanservice(origin);
-
   let storeEntityIds = {};
   let menuData = [];
   let matchedSeoData = null;
 
   try {
     // 1️⃣ Get Store Data
-    const storeRes = await api.postApi("/EmbeddedPageMaster", {
-      a: "GetStoreData",
-      store_domain: api.domain,
-      SITDeveloper: "1",
-    },{
-      headers:{
-        origin: api.domain
+
+    const response = await fetch(
+      "https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          origin,
+          prefer: origin,
+        },
+        body: JSON.stringify({
+          a: "GetStoreData",
+          store_domain: origin,
+          SITDeveloper: "1",
+        }),
       }
-    });
-    storeEntityIds = storeRes?.data?.data || {};
+    );
+    const result = await response.json();
+    const storeEntityIds = result?.success === 1 ? result?.data : {};
     if (!storeEntityIds?.secret_key || !storeEntityIds?.tenant_id) {
       return { notFound: true };
     }
 
     // 2️⃣ Get Menu Navigation Data
-    const menuRes = await api.postLaravelApi("/NavigationMegamenu", {
-      SITDeveloper: "1",
-      a: "GetHomeNavigation",
-      store_id: storeEntityIds.mini_program_id,
-      type: "B2C",
-    });
-
-    menuData = menuRes?.data?.data?.navigation_data || [];
+    const menuRes = await fetch(
+      "https://apiuat-ecom-store.upqor.com/api/call/NavigationMegamenu",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          origin,
+          prefer: origin,
+        },
+        body: JSON.stringify({
+          SITDeveloper: "1",
+          a: "GetHomeNavigation",
+          store_id: storeEntityIds.mini_program_id,
+          type: "B2C",
+        }),
+      }
+    );
+    const menuDatas = await menuRes.json();
+    menuData = menuDatas?.data?.navigation_data || [];
 
     // 3️⃣ Flatten & Match SEO item
     const flatMenu = [];
@@ -61,7 +81,7 @@ export async function getServerSideProps(context) {
     console.error("SSR Error:", error.message);
   }
 
-  const seoData = {
+  const seoDataMenu = {
     title: matchedSeoData?.seo_titles || "Zurah Jewellery",
     description: matchedSeoData?.seo_description || "",
     keywords: matchedSeoData?.seo_keyword || "",
@@ -69,10 +89,10 @@ export async function getServerSideProps(context) {
   };
   return {
     props: {
-      seoData,
+      seoDataMenu,
       entityData: {
         storeEntityIds,
-        menuData,
+        seoDataMenu,
         verticalCode,
       },
     },
@@ -80,17 +100,25 @@ export async function getServerSideProps(context) {
 }
 
 // ✅ Page Component
-export default function ProductsPage({ seoData, entityData }) {
+export default function ProductsPage({ seoDataMenu, entityData }) {
   return (
     <>
-      <Seo
-        title={seoData.title}
-        description={seoData.description}
-        keywords={seoData.keywords}
-        image={seoData.image}
-        url={seoData.url}
-        type="product"
-      />
+      <Head>
+        <title>{seoDataMenu?.title}</title>
+        <meta name="description" content={seoDataMenu?.description} />
+        <meta name="keywords" content={seoDataMenu?.keywords} />
+
+        <meta property="og:title" content={seoDataMenu?.title} />
+        <meta property="og:description" content={seoDataMenu?.description} />
+        <meta property="og:image" content={seoDataMenu?.image} />
+        <meta property="og:url" content={seoDataMenu?.url} />
+        <meta property="og:type" content="website" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoDataMenu?.title} />
+        <meta name="twitter:description" content={seoDataMenu?.description} />
+        <meta name="twitter:image" content={seoDataMenu?.image} />
+      </Head>
       <Jewellery
         storeEntityIds={entityData.storeEntityIds}
         verticalCode={entityData.verticalCode}
