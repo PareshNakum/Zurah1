@@ -193,58 +193,58 @@ function App({ Component, pageProps, seoData }) {
 
   return (
     <Provider store={store}>
-      <Seo
+      {/* <Seo
         title={seoData.title}
         keywords={seoData.keywords}
         description={seoData.description}
         url={seoData.url}
         image={seoData.image}
-      />
+      /> */}
       <InnerApp Component={Component} pageProps={pageProps} />
     </Provider>
   );
 }
 
-// ✅ Fixed name from MyApp to App
- App.getInitialProps = async (appContext) => {
-  const origin = STORE_DOMAIN;
+// // ✅ Fixed name from MyApp to App
+//  App.getInitialProps = async (appContext) => {
+//   const origin = STORE_DOMAIN;
 
-  const res = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      origin,
-      prefer: origin,
-    },
-    body: JSON.stringify({
-      a: "GetStoreData",
-      store_domain: origin,
-      SITDeveloper: "1",
-    }),
-  });
+//   const res = await fetch("https://apiuat-ecom.upqor.com/call/EmbeddedPageMaster", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       origin,
+//       prefer: origin,
+//     },
+//     body: JSON.stringify({
+//       a: "GetStoreData",
+//       store_domain: origin,
+//       SITDeveloper: "1",
+//     }),
+//   });
 
-  const result = await res.json();
-  const storeEntityIds = result?.success === 1 ? result?.data : {};
+//   const result = await res.json();
+//   const storeEntityIds = result?.success === 1 ? result?.data : {};
 
-  const seoData = {
-    title: storeEntityIds?.seo_titles || "Zurah Jewellery",
-    description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
-    keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
-    url: origin,
-    image:storeEntityIds?.preview_image || ""
-  };
+//   const seoData = {
+//     title: storeEntityIds?.seo_titles || "Zurah Jewellery",
+//     description: storeEntityIds?.seo_description || "Elegant jewellery for all occasions",
+//     keywords: storeEntityIds?.seo_keyword || "Zurah, Jewellery",
+//     url: origin,
+//     image:storeEntityIds?.preview_image || ""
+//   };
 
-  // ✅ Safely call next/app's getInitialProps to avoid recursion
-  const appProps = await NextApp.getInitialProps(appContext);
+//   // ✅ Safely call next/app's getInitialProps to avoid recursion
+//   const appProps = await NextApp.getInitialProps(appContext);
 
-  return {
-    ...appProps,
-    seoData,
-    pageProps: {
-      ...appProps?.pageProps,
-      storeEntityIds,
-    },
-  };
-};
+//   return {
+//     ...appProps,
+//     seoData,
+//     pageProps: {
+//       ...appProps?.pageProps,
+//       storeEntityIds,
+//     },
+//   };
+// };
 
 export default App;
